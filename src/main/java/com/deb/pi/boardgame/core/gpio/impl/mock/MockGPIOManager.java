@@ -1,27 +1,17 @@
 package com.deb.pi.boardgame.core.gpio.impl.mock;
 
-import java.util.ArrayList ;
 import java.util.HashMap ;
-import java.util.List ;
 import java.util.Map ;
-import java.util.Map.Entry ;
 
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
-import com.deb.pi.boardgame.core.gpio.impl.pi.PiOutPin ;
-import com.deb.pi.boardgame.core.gpio.GPIOManager ;
-import com.deb.pi.boardgame.core.gpio.InPin ;
-import com.deb.pi.boardgame.core.gpio.OutPin ;
-import com.pi4j.io.gpio.GpioController ;
-import com.pi4j.io.gpio.GpioFactory ;
-import com.pi4j.io.gpio.GpioPinDigitalInput ;
-import com.pi4j.io.gpio.GpioPinDigitalOutput ;
-import com.pi4j.io.gpio.Pin ;
-import com.pi4j.io.gpio.PinState ;
+import com.deb.pi.boardgame.core.gpio.impl.AbstractGPIOManagerImpl ;
 
-public class MockGPIOManager implements GPIOManager {
+public class MockGPIOManager extends AbstractGPIOManagerImpl {
     
-    private static final Map<Integer, Integer> PI_PIN_MAP = new HashMap<Integer, Integer>() ;
+    private static final Map<Integer, Integer> PI_PIN_MAP = 
+                                               new HashMap<Integer, Integer>() ;
+    
     static {
         PI_PIN_MAP.put( 0, 00 ) ;
         PI_PIN_MAP.put( 1, 01 ) ;
@@ -52,27 +42,6 @@ public class MockGPIOManager implements GPIOManager {
         PI_PIN_MAP.put( 24, 24 ) ;
     }
     
-    private Map<Integer, MockOutPin> outputPins = null ;
-    private Map<Integer, MockInPin>  inputPins = null ;
-    
-    public MockGPIOManager() {
-        
-        outputPins = new HashMap<Integer, MockOutPin>() ;
-        inputPins  = new HashMap<Integer, MockInPin>() ;
-    }
-
-    private boolean isPinProvisioned( int pinNum ) {
-        
-        if( inputPins.containsKey( pinNum ) ) {
-            return true ;
-        }
-        if( outputPins.containsKey( pinNum ) ) {
-            return true ;
-        }
-        
-        return false ;
-    }
-    
     @Override
     public void provisionPin( int pinNum, Type pinType ) {
         
@@ -87,38 +56,10 @@ public class MockGPIOManager implements GPIOManager {
         }
         
         if( pinType == Type.OUTPUT ) {
-            MockOutPin outPin = new MockOutPin( pinNum, State.LOW ) ;
-            outputPins.put( pinNum, outPin ) ;
+            addOutputPin( pinNum, new MockOutPin( pinNum, State.LOW ) ) ;
         }
         else {
-            MockInPin inPin = new MockInPin( pinNum ) ;
-            inputPins.put( pinNum, inPin ) ;
+            addInputPin( pinNum, new MockInPin( pinNum ) ) ;
         }
-    }
-
-    @Override
-    public void provisionPins( Map<Integer, Type> provCfg ) {
-        
-        for( Entry<Integer, Type> entry : provCfg.entrySet() ) {
-            provisionPin( entry.getKey(), entry.getValue() ) ;
-        }
-    }
-
-    @Override
-    public InPin getInputPin( int pinNum ) {
-        if( !inputPins.containsKey( pinNum ) ) {
-            throw new IllegalArgumentException( 
-                 "Pin " + pinNum + " has not been provisioned as input pin." ) ;
-        }
-        return inputPins.get( pinNum ) ;
-    }
-
-    @Override
-    public OutPin getOutputPin( int pinNum ) {
-        if( !outputPins.containsKey( pinNum ) ) {
-            throw new IllegalArgumentException( 
-                 "Pin " + pinNum + " has not been provisioned as output pin." ) ;
-        }
-        return outputPins.get( pinNum ) ;
     }
 }

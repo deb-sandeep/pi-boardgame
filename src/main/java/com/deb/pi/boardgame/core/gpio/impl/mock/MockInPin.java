@@ -1,12 +1,11 @@
 package com.deb.pi.boardgame.core.gpio.impl.mock;
 
 import com.deb.pi.boardgame.core.gpio.InPin ;
+import com.deb.pi.boardgame.core.gpio.impl.AbstractPinImpl ;
 
-public class MockInPin implements InPin {
+public class MockInPin extends AbstractPinImpl implements InPin {
 
-    private int pinNum = 0 ;
-    
     MockInPin( int pinNum ) {
-        this.pinNum = pinNum ;
+        super( pinNum ) ;
     }
 }
