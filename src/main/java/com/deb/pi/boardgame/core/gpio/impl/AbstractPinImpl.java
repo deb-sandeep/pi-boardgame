@@ -15,11 +15,11 @@ public abstract class AbstractPinImpl implements AbstractPin {
         return this.pinNum ;
     }
 
-    protected PinState getPinState( State state ) {
+    protected static PinState translateToPinState( State state ) {
         return state == State.HIGH ? PinState.HIGH : PinState.LOW ;
     }
     
-    protected State getState( PinState pinState ) {
+    protected static State translateToState( PinState pinState ) {
         return pinState == PinState.HIGH ? State.HIGH : State.LOW ;
     }
 }

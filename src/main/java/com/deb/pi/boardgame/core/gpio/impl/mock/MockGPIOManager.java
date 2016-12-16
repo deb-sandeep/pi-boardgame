@@ -3,10 +3,9 @@ package com.deb.pi.boardgame.core.gpio.impl.mock;
 import java.util.HashMap ;
 import java.util.Map ;
 
-import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
-import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
+import com.deb.pi.boardgame.core.gpio.InPin.PullResistanceType ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.gpio.impl.AbstractGPIOManagerImpl ;
 
@@ -45,33 +44,35 @@ public class MockGPIOManager extends AbstractGPIOManagerImpl {
         PI_PIN_MAP.put( 24, 24 ) ;
     }
     
-    @Override
-    public AbstractPin provisionPin( int pinNum, Type pinType ) {
-        
-        AbstractPin provisionedPin = null ;
-        
-        if( isPinProvisioned( pinNum ) ) {
-            throw new IllegalArgumentException( 
-                           "Pin " + pinNum + " is already provisioned." ) ;
-        }
-        
+    private void assertIfPinUnprovisionable( int pinNum ) {
         if( PI_PIN_MAP.get( pinNum ) == null ) {
             throw new IllegalArgumentException( 
                            "Pin " + pinNum + " can't be provisioned." ) ;
         }
+    }
+    
+    @Override
+    public InPin provisionInputPin( int pinNum, PullResistanceType prType ) {
         
-        if( pinType == Type.OUTPUT ) {
-            OutPin outPin = new MockOutPin( pinNum, State.LOW ) ;
-            addOutputPin( pinNum, outPin ) ;
-            provisionedPin = outPin ;
-        }
-        else {
-            InPin inPin = new MockInPin( pinNum ) ;
-            addInputPin( pinNum, inPin ) ;
-            provisionedPin = inPin ;
-        }
+        assertIfPinProvisioned( pinNum ) ;
+        assertIfPinUnprovisionable( pinNum ) ;
         
-        return provisionedPin ;
+        InPin inPin = new MockInPin( pinNum ) ;
+        addInputPin( pinNum, inPin ) ;
+
+        return inPin ;
+    }
+
+    @Override
+    public OutPin provisionOutputPin( int pinNum ) {
+        
+        assertIfPinProvisioned( pinNum ) ;
+        assertIfPinUnprovisionable( pinNum ) ;
+        
+        OutPin outPin = new MockOutPin( pinNum, State.LOW ) ;
+        addOutputPin( pinNum, outPin ) ;
+        
+        return outPin ;
     }
     
     public void reset() {

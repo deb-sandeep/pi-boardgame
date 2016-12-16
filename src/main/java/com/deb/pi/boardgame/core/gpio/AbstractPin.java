@@ -6,4 +6,5 @@ public interface AbstractPin {
     public static enum State{ HIGH, LOW } ;
     
     public int getPinNum() ;
+    public State getState() ;
 }

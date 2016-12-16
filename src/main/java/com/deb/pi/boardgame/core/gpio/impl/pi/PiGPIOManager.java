@@ -3,15 +3,16 @@ package com.deb.pi.boardgame.core.gpio.impl.pi;
 import java.util.HashMap ;
 import java.util.Map ;
 
-import com.deb.pi.boardgame.core.gpio.AbstractPin ;
-import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
+import com.deb.pi.boardgame.core.gpio.InPin.PullResistanceType ;
 import com.deb.pi.boardgame.core.gpio.impl.AbstractGPIOManagerImpl ;
 import com.pi4j.io.gpio.GpioController ;
 import com.pi4j.io.gpio.GpioFactory ;
+import com.pi4j.io.gpio.GpioPinDigitalInput ;
 import com.pi4j.io.gpio.GpioPinDigitalOutput ;
 import com.pi4j.io.gpio.Pin ;
+import com.pi4j.io.gpio.PinPullResistance ;
 import com.pi4j.io.gpio.PinState ;
 import com.pi4j.io.gpio.RaspiPin ;
 
@@ -55,46 +56,56 @@ public class PiGPIOManager extends AbstractGPIOManagerImpl {
         pi = GpioFactory.getInstance() ;
     }
     
-    @Override
-    public AbstractPin provisionPin( int pinNum, Type pinType ) {
-        
-        AbstractPin provisionedPin = null ;
-        
-        if( isPinProvisioned( pinNum ) ) {
-            throw new IllegalArgumentException( 
-                           "Pin " + pinNum + " is already provisioned." ) ;
-        }
-        
-        Pin pin = PI_PIN_MAP.get( pinNum ) ;
-        if( pin == null ) {
+    private void assertIfPinUnprovisionable( int pinNum ) {
+        if( PI_PIN_MAP.get( pinNum ) == null ) {
             throw new IllegalArgumentException( 
                            "Pin " + pinNum + " can't be provisioned." ) ;
         }
+    }
+    
+    @Override
+    public InPin provisionInputPin( int pinNum, PullResistanceType prType ) {
         
-        if( pinType == Type.OUTPUT ) {
-            
-            GpioPinDigitalOutput piOutPin = null ;
-            piOutPin = pi.provisionDigitalOutputPin( pin, PinState.LOW ) ;
-            piOutPin.setShutdownOptions( true, PinState.LOW ) ;
-            
-            OutPin outPin = new PiOutPin( pinNum, piOutPin ) ;
-            addOutputPin( pinNum, outPin ) ;
-            provisionedPin = outPin ;
-        }
-        else {
-            // TODO: Understand how to configure a digital input.
-            throw new IllegalStateException( "To be implemented" ) ;
-        }
+        assertIfPinProvisioned( pinNum ) ;
+        assertIfPinUnprovisionable( pinNum ) ;
+
+        GpioPinDigitalInput piInPin        = null ;
+        PinPullResistance   pullResistance = null ;
+        Pin                 piPin          = PI_PIN_MAP.get( pinNum ) ;
         
-        return provisionedPin ;
+        pullResistance = (prType == PullResistanceType.DOWN) ? 
+                                   PinPullResistance.PULL_DOWN :
+                                   PinPullResistance.PULL_UP ;
+             
+        piInPin = pi.provisionDigitalInputPin( piPin, pullResistance ) ;
+        
+        InPin pin = new PiInPin( pinNum, piInPin ) ;
+        addInputPin( pinNum, pin ) ;
+        return pin ;
     }
 
+    @Override
+    public OutPin provisionOutputPin( int pinNum ) {
+        
+        assertIfPinProvisioned( pinNum ) ;
+        assertIfPinUnprovisionable( pinNum ) ;
+        
+        GpioPinDigitalOutput piOutPin = null ;
+        
+        Pin pin = PI_PIN_MAP.get( pinNum ) ;
+        piOutPin = pi.provisionDigitalOutputPin( pin, PinState.LOW ) ;
+        piOutPin.setShutdownOptions( true, PinState.LOW ) ;
+        
+        OutPin outPin = new PiOutPin( pinNum, piOutPin ) ;
+        addOutputPin( pinNum, outPin ) ;
+        return outPin ;
+    }
+    
     public void reset() {
         
         for( OutPin pin : getOutputPins() ) {
             pi.unprovisionPin( ((PiOutPin)pin).getPiPin() ) ;
         }
-
         for( InPin pin : getInputPins() ) {
             pi.unprovisionPin( ((PiInPin)pin).getPiPin() ) ;
         }

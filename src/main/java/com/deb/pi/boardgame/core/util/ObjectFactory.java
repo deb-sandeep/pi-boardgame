@@ -72,6 +72,11 @@ public class ObjectFactory {
         this.appCtx.refresh() ;
     }
 
+    public void reset() {
+        customResourcePath = null ;
+        reloadRequired = true ;
+    }
+    
     public <T> T getBean( String name, Class<T> requiredType ) {
         return appCtx.getBean( name, requiredType ) ;
     }

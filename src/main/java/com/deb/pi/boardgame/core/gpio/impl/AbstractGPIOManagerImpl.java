@@ -3,12 +3,11 @@ package com.deb.pi.boardgame.core.gpio.impl;
 import java.util.Collection ;
 import java.util.HashMap ;
 import java.util.Map ;
-import java.util.Map.Entry ;
 
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
+import com.deb.pi.boardgame.core.gpio.InPin.PullResistanceType ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
-import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
 
 public abstract class AbstractGPIOManagerImpl implements GPIOManager {
 
@@ -38,23 +37,26 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
         return false ;
     }
     
+    protected void assertIfPinProvisioned( int pinNum ) {
+        if( isPinProvisioned( pinNum ) ) {
+            throw new IllegalArgumentException( 
+                           "Pin " + pinNum + " is already provisioned." ) ;
+        }
+    }
+    
     protected void unprovisionAllPins() {
         outputPins.clear() ; 
-        inputPins.clear() ;
-    }
-
-    @Override
-    public void provisionPins( Map<Integer, Type> provCfg ) {
-        for( Entry<Integer, Type> entry : provCfg.entrySet() ) {
-            provisionPin( entry.getKey(), entry.getValue() ) ;
+        for( InPin inPin : inputPins.values() ) {
+            inPin.removeAllListeners() ;
         }
+        inputPins.clear() ;
     }
 
     @Override
     public InPin getInputPin( int pinNum ) {
 
         if( !isPinProvisioned( pinNum ) ) {
-            provisionPin( pinNum, Type.INPUT ) ;
+            provisionInputPin( pinNum, PullResistanceType.DOWN  ) ;
         }
         if( !inputPins.containsKey( pinNum ) ) {
             throw new IllegalArgumentException( 
@@ -67,7 +69,7 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
     public OutPin getOutputPin( int pinNum ) {
         
         if( !isPinProvisioned( pinNum ) ) {
-            provisionPin( pinNum, Type.OUTPUT ) ;
+            provisionOutputPin( pinNum) ;
         }
         
         if( !outputPins.containsKey( pinNum ) ) {

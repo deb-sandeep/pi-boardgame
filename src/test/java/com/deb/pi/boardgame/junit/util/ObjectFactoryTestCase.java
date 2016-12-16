@@ -18,7 +18,6 @@ public class ObjectFactoryTestCase {
     
     @Before
     public void loadObjectFactory() {
-        
         ObjectFactory.setCustomResourcePath( RES_PATH ) ;
         objFactory = ObjectFactory.instance() ;
     }

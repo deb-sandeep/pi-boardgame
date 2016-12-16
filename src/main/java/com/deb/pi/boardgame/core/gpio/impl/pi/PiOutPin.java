@@ -20,12 +20,12 @@ public class PiOutPin extends AbstractPinImpl implements OutPin {
     @Override
     public void setState( State state ) {
         log.debug( "Setting pin " + getPinNum() + " to " + state ) ;
-        piOutPin.setState( getPinState( state ) ) ;
+        piOutPin.setState( translateToPinState( state ) ) ;
     }
     
     @Override
     public State getState() {
-        return getState( piOutPin.getState() ) ;
+        return translateToState( piOutPin.getState() ) ;
     }
     
     public GpioPinDigitalOutput getPiPin() {
