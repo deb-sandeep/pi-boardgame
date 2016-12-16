@@ -18,8 +18,8 @@ public class OutputBus extends AbstractBus {
     public OutputBus( int... pinNums ) {
         GPIOManager pi = ObjectFactory.instance().getGPIOManager() ;
         OutPin[] pins = new OutPin[pinNums.length] ;
-        for( int i : pinNums ) {
-            pins[i] = pi.getOutputPin( i ) ;
+        for( int i=0; i<pinNums.length; i++ ) {
+            pins[i] = pi.getOutputPin( pinNums[i] ) ;
         }
         super.setPins( pins ) ;
         this.pins = pins ;
@@ -35,6 +35,7 @@ public class OutputBus extends AbstractBus {
             pins[i].setState( state ) ;
         }
         this.currentData = data ;
+        super.broadcastNewDataOnBus( this.currentData ) ;
     }
 
     public int getCurrentDataAsDec() {

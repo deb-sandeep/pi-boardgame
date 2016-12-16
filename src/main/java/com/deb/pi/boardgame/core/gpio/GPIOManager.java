@@ -35,4 +35,6 @@ public interface GPIOManager {
     public OutPin getOutputPin( int pinNum ) ;
     
     public void reset() ;
+    
+    public void shutdown() ;
 }

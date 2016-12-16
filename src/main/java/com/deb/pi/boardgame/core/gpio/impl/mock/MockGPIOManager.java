@@ -78,4 +78,8 @@ public class MockGPIOManager extends AbstractGPIOManagerImpl {
     public void reset() {
         super.unprovisionAllPins() ;
     }
+    
+    public void shutdown() {
+        reset() ;
+    }
 }

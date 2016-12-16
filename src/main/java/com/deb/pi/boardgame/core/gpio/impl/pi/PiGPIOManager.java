@@ -78,6 +78,7 @@ public class PiGPIOManager extends AbstractGPIOManagerImpl {
                                    PinPullResistance.PULL_UP ;
              
         piInPin = pi.provisionDigitalInputPin( piPin, pullResistance ) ;
+        piInPin.setDebounce( 500 ) ;
         
         InPin pin = new PiInPin( pinNum, piInPin ) ;
         addInputPin( pinNum, pin ) ;
@@ -111,5 +112,10 @@ public class PiGPIOManager extends AbstractGPIOManagerImpl {
         }
 
         super.unprovisionAllPins() ;
+    }
+
+    @Override
+    public void shutdown() {
+        pi.shutdown() ;
     }
 }

@@ -69,7 +69,7 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
     public OutPin getOutputPin( int pinNum ) {
         
         if( !isPinProvisioned( pinNum ) ) {
-            provisionOutputPin( pinNum) ;
+            provisionOutputPin( pinNum ) ;
         }
         
         if( !outputPins.containsKey( pinNum ) ) {

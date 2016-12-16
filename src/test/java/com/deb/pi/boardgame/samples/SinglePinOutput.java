@@ -14,10 +14,10 @@ public class SinglePinOutput {
         OutPin pin = pi.getOutputPin( 0 ) ;
         
         pin.setState( State.HIGH ) ;
-        Thread.sleep( 2000 ) ;
+        Thread.sleep( 1000 ) ;
         pin.setState( State.LOW ) ;
-        Thread.sleep( 2000 ) ;
+        Thread.sleep( 1000 ) ;
         pin.setState( State.HIGH ) ;
-        Thread.sleep( 2000 ) ;
+        Thread.sleep( 1000 ) ;
     }
 }

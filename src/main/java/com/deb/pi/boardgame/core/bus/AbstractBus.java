@@ -1,10 +1,14 @@
 package com.deb.pi.boardgame.core.bus;
 
+import java.util.HashSet ;
+import java.util.Set ;
+
 import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 
-abstract class AbstractBus {
+public abstract class AbstractBus {
     
     private AbstractPin[] pins = null ;
+    private Set<BusListener> listeners = new HashSet<BusListener>() ;
     
     protected AbstractBus() {
     }
@@ -18,6 +22,10 @@ abstract class AbstractBus {
         if( pins == null || pins.length == 0 ) {
             throw new IllegalArgumentException( "Num pins for a bus can't be 0" ) ;
         }
+    }
+    
+    public AbstractPin[] getPins() {
+        return this.pins ;
     }
     
     protected void checkDataSize( int data ) {
@@ -41,6 +49,20 @@ abstract class AbstractBus {
         }
         
         return binData ;
+    }
+    
+    protected void broadcastNewDataOnBus( int data ) {
+        for( BusListener l : listeners ) {
+            l.newDataAvailable( this ) ;
+        }        
+    }
+    
+    public void addBusListener( BusListener listener ) {
+        this.listeners.add( listener ) ;
+    }
+    
+    public void removeBusListener( BusListener listner ) {
+        this.listeners.remove( listner ) ;
     }
     
     public int getNumPins() {
