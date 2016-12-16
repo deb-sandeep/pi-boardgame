@@ -11,14 +11,16 @@ public class App {
 
     public static void main( String[] args ) throws Exception {
         
-        ObjectFactory of = ObjectFactory.instance() ;
-        
-        GPIOManager gpioManager = of.getBean( "GPIOManager", GPIOManager.class ) ;
+        GPIOManager gpioManager = ObjectFactory.instance().getGPIOManager() ;
         gpioManager.provisionPin( 0, Type.OUTPUT ) ;
         
         OutPin pin = gpioManager.getOutputPin( 0 ) ;
-        pin.setState( State.HIGH ) ;
         
-        Thread.sleep( 3000 ) ;
+        pin.setState( State.HIGH ) ;
+        Thread.sleep( 2000 ) ;
+        pin.setState( State.LOW ) ;
+        Thread.sleep( 2000 ) ;
+        pin.setState( State.HIGH ) ;
+        Thread.sleep( 2000 ) ;
     }
 }

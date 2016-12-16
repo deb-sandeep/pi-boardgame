@@ -1,0 +1,18 @@
+* What is 'runMode' ?
+runMode is a system property which tells the program whether it needs to execute
+against Pi or mock the Pi and run it locally.
+
+* How is 'runMode' set?
+runMode is set as a system property using the -DrunMode=mock command line 
+argument to the JVM. If you want to apply it from within eclipse
+
+  - Open Run -> Run Configuration
+  - Choose the configuration of your program or JUnit driver
+  - Go to arguments tab
+  - In the VM arguments, put -DrunType=mock
+  
+* What are the possible values of 'runMode'?
+If the value of runMode is "mock" (without quotes and ignore case), the program
+will execute in a mock mode. Any other value will make it execute live against
+Pi.
+

@@ -6,7 +6,7 @@
                            http://www.springframework.org/schema/beans/spring-beans-3.0.xsd">
    
    <bean id="GPIOManager" 
-         class="com.deb.pi.boardgame.core.gpio.impl.pi.PiGPIOManager">
+         class="com.deb.pi.boardgame.core.gpio.impl.mock.MockGPIOManager">
    </bean>
    
 </beans>

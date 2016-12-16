@@ -1,0 +1,32 @@
+#!/bin/bash
+
+# Note: Replace the masked password <MASKED> with the password of remgpio user 
+# on Pi3
+
+project_loc=$1
+project_name=$2
+java_type_name=$3
+
+echo ">> Initiating execution on Pi3"
+echo "-------------------------------------------------------------------------"
+echo "project_loc    = $project_loc" 
+echo "project_name   = $project_name" 
+echo "java_type_name = $java_type_name" 
+
+pi3=192.168.0.104
+passwd=<MASKED>
+loc_classes_folder="$project_loc/target/classes/"
+rem_classes_folder="/home/remgpio/projects/$project_name/classes/"
+
+echo
+echo ">> Refreshing compiled resources to Pi3 ....."
+echo "-------------------------------------------------------------------------"
+sshpass -p $passwd ssh remgpio@$pi3 "mkdir -p $rem_classes_folder"
+sshpass -p $passwd rsync -rpit  $loc_classes_folder remgpio@$pi3:$rem_classes_folder | grep "^[^\.]"
+
+echo
+echo ">> Executing $java_type_name on Pi3"
+echo "-------------------------------------------------------------------------"
+sshpass -p $passwd ssh remgpio@$pi3 "/home/remgpio/projects/pirun $project_name $java_type_name"
+
+

@@ -2,6 +2,8 @@ package com.deb.pi.boardgame.core.util ;
 
 import org.springframework.context.support.GenericXmlApplicationContext ;
 
+import com.deb.pi.boardgame.core.gpio.GPIOManager ;
+
 /**
  * Loads a consolidated application context from multiple resource paths.
  * The resource paths need to be qualified as per the following guidelines:
@@ -14,8 +16,13 @@ import org.springframework.context.support.GenericXmlApplicationContext ;
  */
 public class ObjectFactory {
 
-    private static final String ROOT_RESOURCE_PATH = 
-                                 "classpath:com/deb/pi/boardgame/bean-def.xml" ;
+    private static final String LIVE_RESOURCE_PATH = 
+            "classpath:com/deb/pi/boardgame/bean-def.xml" ;
+    
+    private static final String MOCK_RESOURCE_PATH = 
+            "classpath:com/deb/pi/boardgame/bean-def-mock.xml" ;
+    
+    private static final String BN_GPIO_MANAGER = "GPIOManager" ;
     
     private static String customResourcePath = null ;
     private static ObjectFactory instance = null ;
@@ -39,14 +46,29 @@ public class ObjectFactory {
         return instance ;
     }
     
-    private void initialize() throws RuntimeException {
-        
+    private boolean isMockRun() {
+        String runType = System.getProperty( "runType" ) ;
+        if( runType.equalsIgnoreCase( "mock" ) ) {
+            return true ;
+        }
+        return false ;
+    }
+    
+    private String getConfigResourcePath() {
         String resPath = customResourcePath ;
         if( resPath == null ) {
-            resPath = ROOT_RESOURCE_PATH ;
+            if( isMockRun() ) {
+                resPath = MOCK_RESOURCE_PATH ;
+            }
+            else {
+                resPath = LIVE_RESOURCE_PATH ;
+            }
         }
-        
-        this.appCtx.load( resPath );
+        return resPath ;
+    }
+    
+    private void initialize() throws RuntimeException {
+        this.appCtx.load( getConfigResourcePath() );
         this.appCtx.refresh() ;
     }
 
@@ -56,5 +78,9 @@ public class ObjectFactory {
 
     public Object getBean( String name ) {
         return appCtx.getBean( name ) ;
+    }
+    
+    public GPIOManager getGPIOManager() {
+        return getBean( BN_GPIO_MANAGER, GPIOManager.class ) ;
     }
 }
