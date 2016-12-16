@@ -48,7 +48,7 @@ public class ObjectFactory {
     
     private boolean isMockRun() {
         String runType = System.getProperty( "runType" ) ;
-        if( runType.equalsIgnoreCase( "mock" ) ) {
+        if( runType != null && runType.equalsIgnoreCase( "mock" ) ) {
             return true ;
         }
         return false ;

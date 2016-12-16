@@ -1,5 +1,6 @@
 package com.deb.pi.boardgame.core.gpio.impl;
 
+import java.util.Collection ;
 import java.util.HashMap ;
 import java.util.Map ;
 import java.util.Map.Entry ;
@@ -36,6 +37,11 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
         }
         return false ;
     }
+    
+    protected void unprovisionAllPins() {
+        outputPins.clear() ; 
+        inputPins.clear() ;
+    }
 
     @Override
     public void provisionPins( Map<Integer, Type> provCfg ) {
@@ -46,6 +52,10 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
 
     @Override
     public InPin getInputPin( int pinNum ) {
+
+        if( !isPinProvisioned( pinNum ) ) {
+            provisionPin( pinNum, Type.INPUT ) ;
+        }
         if( !inputPins.containsKey( pinNum ) ) {
             throw new IllegalArgumentException( 
                  "Pin " + pinNum + " has not been provisioned as input pin." ) ;
@@ -55,10 +65,24 @@ public abstract class AbstractGPIOManagerImpl implements GPIOManager {
 
     @Override
     public OutPin getOutputPin( int pinNum ) {
+        
+        if( !isPinProvisioned( pinNum ) ) {
+            provisionPin( pinNum, Type.OUTPUT ) ;
+        }
+        
         if( !outputPins.containsKey( pinNum ) ) {
             throw new IllegalArgumentException( 
                  "Pin " + pinNum + " has not been provisioned as output pin." ) ;
         }
+        
         return outputPins.get( pinNum ) ;
+    }
+    
+    protected Collection<OutPin> getOutputPins() {
+        return outputPins.values() ;
+    }
+    
+    protected Collection<InPin> getInputPins() {
+        return inputPins.values() ;
     }
 }

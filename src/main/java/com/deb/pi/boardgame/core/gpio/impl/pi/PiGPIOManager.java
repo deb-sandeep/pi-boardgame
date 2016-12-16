@@ -3,7 +3,10 @@ package com.deb.pi.boardgame.core.gpio.impl.pi;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
+import com.deb.pi.boardgame.core.gpio.InPin ;
+import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.gpio.impl.AbstractGPIOManagerImpl ;
 import com.pi4j.io.gpio.GpioController ;
 import com.pi4j.io.gpio.GpioFactory ;
@@ -53,7 +56,9 @@ public class PiGPIOManager extends AbstractGPIOManagerImpl {
     }
     
     @Override
-    public void provisionPin( int pinNum, Type pinType ) {
+    public AbstractPin provisionPin( int pinNum, Type pinType ) {
+        
+        AbstractPin provisionedPin = null ;
         
         if( isPinProvisioned( pinNum ) ) {
             throw new IllegalArgumentException( 
@@ -68,15 +73,32 @@ public class PiGPIOManager extends AbstractGPIOManagerImpl {
         
         if( pinType == Type.OUTPUT ) {
             
-            GpioPinDigitalOutput outPin = null ;
-            outPin = pi.provisionDigitalOutputPin( pin, PinState.LOW ) ;
-            outPin.setShutdownOptions( true, PinState.LOW ) ;
+            GpioPinDigitalOutput piOutPin = null ;
+            piOutPin = pi.provisionDigitalOutputPin( pin, PinState.LOW ) ;
+            piOutPin.setShutdownOptions( true, PinState.LOW ) ;
             
-            addOutputPin( pinNum, new PiOutPin( pinNum, outPin ) ) ;
+            OutPin outPin = new PiOutPin( pinNum, piOutPin ) ;
+            addOutputPin( pinNum, outPin ) ;
+            provisionedPin = outPin ;
         }
         else {
             // TODO: Understand how to configure a digital input.
             throw new IllegalStateException( "To be implemented" ) ;
         }
+        
+        return provisionedPin ;
+    }
+
+    public void reset() {
+        
+        for( OutPin pin : getOutputPins() ) {
+            pi.unprovisionPin( ((PiOutPin)pin).getPiPin() ) ;
+        }
+
+        for( InPin pin : getInputPins() ) {
+            pi.unprovisionPin( ((PiInPin)pin).getPiPin() ) ;
+        }
+
+        super.unprovisionAllPins() ;
     }
 }

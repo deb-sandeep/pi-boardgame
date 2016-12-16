@@ -3,8 +3,11 @@ package com.deb.pi.boardgame.core.gpio.impl.mock;
 import java.util.HashMap ;
 import java.util.Map ;
 
+import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.Type ;
+import com.deb.pi.boardgame.core.gpio.InPin ;
+import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.gpio.impl.AbstractGPIOManagerImpl ;
 
 public class MockGPIOManager extends AbstractGPIOManagerImpl {
@@ -43,7 +46,9 @@ public class MockGPIOManager extends AbstractGPIOManagerImpl {
     }
     
     @Override
-    public void provisionPin( int pinNum, Type pinType ) {
+    public AbstractPin provisionPin( int pinNum, Type pinType ) {
+        
+        AbstractPin provisionedPin = null ;
         
         if( isPinProvisioned( pinNum ) ) {
             throw new IllegalArgumentException( 
@@ -56,10 +61,20 @@ public class MockGPIOManager extends AbstractGPIOManagerImpl {
         }
         
         if( pinType == Type.OUTPUT ) {
-            addOutputPin( pinNum, new MockOutPin( pinNum, State.LOW ) ) ;
+            OutPin outPin = new MockOutPin( pinNum, State.LOW ) ;
+            addOutputPin( pinNum, outPin ) ;
+            provisionedPin = outPin ;
         }
         else {
-            addInputPin( pinNum, new MockInPin( pinNum ) ) ;
+            InPin inPin = new MockInPin( pinNum ) ;
+            addInputPin( pinNum, inPin ) ;
+            provisionedPin = inPin ;
         }
+        
+        return provisionedPin ;
+    }
+    
+    public void reset() {
+        super.unprovisionAllPins() ;
     }
 }

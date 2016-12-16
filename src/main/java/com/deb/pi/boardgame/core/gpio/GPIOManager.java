@@ -8,9 +8,11 @@ public interface GPIOManager {
 
     public void provisionPins( Map<Integer, Type> provisioningConfig ) ;
     
-    public void provisionPin( int pinNum, Type pinType ) ;
+    public AbstractPin provisionPin( int pinNum, Type pinType ) ;
     
     public InPin getInputPin( int pinNum ) ;
     
     public OutPin getOutputPin( int pinNum ) ;
+    
+    public void reset() ;
 }

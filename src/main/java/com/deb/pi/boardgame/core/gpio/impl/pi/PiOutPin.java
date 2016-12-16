@@ -27,4 +27,8 @@ public class PiOutPin extends AbstractPinImpl implements OutPin {
     public State getState() {
         return getState( piOutPin.getState() ) ;
     }
+    
+    public GpioPinDigitalOutput getPiPin() {
+        return this.piOutPin ;
+    }
 }
