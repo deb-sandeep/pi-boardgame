@@ -1,7 +1,9 @@
 package com.deb.pi.boardgame.core.bus;
 
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
+import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
+import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
 public class OutputBus extends AbstractBus {
 
@@ -13,17 +15,25 @@ public class OutputBus extends AbstractBus {
         this.pins = pins ;
     }
     
-    public void sendData( int data ) {
+    public OutputBus( int... pinNums ) {
+        GPIOManager pi = ObjectFactory.instance().getGPIOManager() ;
+        OutPin[] pins = new OutPin[pinNums.length] ;
+        for( int i : pinNums ) {
+            pins[i] = pi.getOutputPin( i ) ;
+        }
+        super.setPins( pins ) ;
+        this.pins = pins ;
+    }
+    
+    public void setData( int data ) {
         
         checkDataSize( data ) ;        
         
-        String binaryStr = Integer.toBinaryString( data ) ;
-        for( int i=0; i<binaryStr.length(); i++ ) {
-            char bit = binaryStr.charAt( i ) ;
-            State state = bit == '0' ? State.LOW : State.HIGH ;
+        int[] pinStates = super.convertToBin( data ) ;
+        for( int i=0; i<pinStates.length; i++ ) {
+            State state = pinStates[i] == 0 ? State.LOW : State.HIGH ;
             pins[i].setState( state ) ;
         }
-        
         this.currentData = data ;
     }
 

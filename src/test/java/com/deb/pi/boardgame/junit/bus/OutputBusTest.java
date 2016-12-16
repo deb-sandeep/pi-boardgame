@@ -32,7 +32,10 @@ public class OutputBusTest {
         OutputBus bus = new OutputBus( p0, p1, p2 ) ;
         assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
         
-        bus.sendData( 3 ) ;
+        bus.setData( 2 ) ;
+        assertArrayEquals( new int[]{0, 1, 0}, bus.getCurrentDataAsBin() ) ;
+        
+        bus.setData( 3 ) ;
         assertArrayEquals( new int[]{1, 1, 0}, bus.getCurrentDataAsBin() ) ;
     }
 
@@ -45,6 +48,6 @@ public class OutputBusTest {
         OutputBus bus = new OutputBus( p0, p1, p2 ) ;
         assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
 
-        bus.sendData( 24 ) ;
+        bus.setData( 24 ) ;
     }
 }

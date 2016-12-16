@@ -6,7 +6,14 @@ abstract class AbstractBus {
     
     private AbstractPin[] pins = null ;
     
+    protected AbstractBus() {
+    }
+    
     protected AbstractBus( AbstractPin[] pins ) {
+        setPins( pins ) ;
+    }
+    
+    protected void setPins( AbstractPin[] pins ) {
         this.pins = pins ;
         if( pins == null || pins.length == 0 ) {
             throw new IllegalArgumentException( "Num pins for a bus can't be 0" ) ;
@@ -22,15 +29,17 @@ abstract class AbstractBus {
     }
     
     protected int[] convertToBin( int data ) {
+        
         checkDataSize( data ) ;
         
         int[] binData = new int[getNumPins()] ;
         String binaryStr = Integer.toBinaryString( data ) ;
         
         for( int i=0; i<binaryStr.length(); i++ ) {
-            char bit = binaryStr.charAt( i ) ;
+            char bit = binaryStr.charAt( binaryStr.length()-1-i ) ;
             binData[i] = bit=='0' ? 0 : 1 ;
         }
+        
         return binData ;
     }
     

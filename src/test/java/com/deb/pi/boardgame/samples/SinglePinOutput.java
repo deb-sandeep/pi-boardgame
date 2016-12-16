@@ -1,4 +1,4 @@
-package com.deb.pi.boardgame;
+package com.deb.pi.boardgame.samples;
 
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
@@ -6,7 +6,7 @@ import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
 
-public class App {
+public class SinglePinOutput {
 
     public static void main( String[] args ) throws Exception {
         
