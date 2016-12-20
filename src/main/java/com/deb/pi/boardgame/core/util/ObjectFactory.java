@@ -50,6 +50,10 @@ public class ObjectFactory {
     
     private boolean isMockRun() {
         String runType = System.getProperty( "runType" ) ;
+        if( runType == null ) {
+            runType = System.getenv( "PI_RUN_TYPE" ) ;
+        }
+        
         if( runType != null && runType.equalsIgnoreCase( "mock" ) ) {
             return true ;
         }

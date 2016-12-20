@@ -4,7 +4,7 @@ import java.util.concurrent.ThreadLocalRandom ;
 
 import com.deb.pi.boardgame.core.bus.AbstractBus ;
 import com.deb.pi.boardgame.core.bus.BusListener ;
-import com.deb.pi.boardgame.core.bus.InputBus ;
+import com.deb.pi.boardgame.core.bus.ParallelInputBus ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.impl.mock.MockInPin ;
@@ -13,7 +13,7 @@ public class InputBusExample {
 
     public static void main( String[] args ) throws Exception {
         
-        InputBus iBus = new InputBus( 0, 1, 2 ) ;
+        ParallelInputBus iBus = new ParallelInputBus( 0, 1, 2 ) ;
         
         iBus.addBusListener( new BusListener() {
             @Override
@@ -31,7 +31,7 @@ public class InputBusExample {
     }
     
     // This is a mocking method - do not use this logic against Pi
-    private static void setDataInInputBus( int data, InputBus bus ) {
+    private static void setDataInInputBus( int data, ParallelInputBus bus ) {
         
         AbstractPin[] pins = bus.getPins() ;
         int[] pinValues = convertToBin( data, bus.getNumPins() ) ;

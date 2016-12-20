@@ -1,14 +1,12 @@
 package com.deb.pi.boardgame.samples;
 
-import java.util.Arrays ;
-
-import com.deb.pi.boardgame.core.bus.OutputBus ;
+import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
 
 public class OutputBusExample {
 
     public static void main( String[] args ) throws Exception {
         
-        OutputBus bus = new OutputBus( 0, 1, 2, 3 ) ;
+        ParallelOutputBus bus = new ParallelOutputBus( 0, 1, 2, 3 ) ;
         
         int iterationCount = 0 ;
         int nextDataOnBus  = 0 ;
@@ -16,7 +14,7 @@ public class OutputBusExample {
             System.out.println( "----------------------------------------" ) ;
             System.out.println( "Setting data = " + nextDataOnBus ) ;
             bus.setData( nextDataOnBus ) ;
-            System.out.println( Arrays.toString( bus.getCurrentDataAsBin() ) ) ;
+            System.out.println( bus.getCurrentDataAsDec() ) ;
             
             Thread.sleep( 100 ) ;
             

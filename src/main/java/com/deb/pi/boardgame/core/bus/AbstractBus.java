@@ -1,5 +1,6 @@
 package com.deb.pi.boardgame.core.bus;
 
+import java.util.BitSet ;
 import java.util.HashSet ;
 import java.util.Set ;
 
@@ -36,21 +37,6 @@ public abstract class AbstractBus {
         }
     }
     
-    protected int[] convertToBin( int data ) {
-        
-        checkDataSize( data ) ;
-        
-        int[] binData = new int[getNumPins()] ;
-        String binaryStr = Integer.toBinaryString( data ) ;
-        
-        for( int i=0; i<binaryStr.length(); i++ ) {
-            char bit = binaryStr.charAt( binaryStr.length()-1-i ) ;
-            binData[i] = bit=='0' ? 0 : 1 ;
-        }
-        
-        return binData ;
-    }
-    
     protected void broadcastNewDataOnBus( int data ) {
         for( BusListener l : listeners ) {
             l.newDataAvailable( this ) ;
@@ -75,5 +61,5 @@ public abstract class AbstractBus {
     
     public abstract int getCurrentDataAsDec() ;
     
-    public abstract int[] getCurrentDataAsBin() ;
+    public abstract BitSet getCurrentDataAsBin() ;
 }

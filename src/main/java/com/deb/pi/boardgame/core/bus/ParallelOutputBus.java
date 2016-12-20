@@ -1,21 +1,24 @@
 package com.deb.pi.boardgame.core.bus;
 
+import java.util.BitSet ;
+
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
+import com.deb.pi.boardgame.core.util.PiUtils ;
 
-public class OutputBus extends AbstractBus {
+public class ParallelOutputBus extends AbstractBus {
 
     private OutPin[] pins = null ;
     private int currentData = 0 ;
     
-    public OutputBus( OutPin... pins ) {
+    public ParallelOutputBus( OutPin... pins ) {
         super( pins ) ;
         this.pins = pins ;
     }
     
-    public OutputBus( int... pinNums ) {
+    public ParallelOutputBus( int... pinNums ) {
         GPIOManager pi = ObjectFactory.instance().getGPIOManager() ;
         OutPin[] pins = new OutPin[pinNums.length] ;
         for( int i=0; i<pinNums.length; i++ ) {
@@ -27,11 +30,11 @@ public class OutputBus extends AbstractBus {
     
     public void setData( int data ) {
         
-        checkDataSize( data ) ;        
+        checkDataSize( data ) ;
         
-        int[] pinStates = super.convertToBin( data ) ;
-        for( int i=0; i<pinStates.length; i++ ) {
-            State state = pinStates[i] == 0 ? State.LOW : State.HIGH ;
+        BitSet pinStates = PiUtils.convertToBitSet( data ) ;
+        for( int i=0; i<pins.length; i++ ) {
+            State state = pinStates.get( i ) ? State.HIGH : State.LOW ;
             pins[i].setState( state ) ;
         }
         this.currentData = data ;
@@ -42,7 +45,7 @@ public class OutputBus extends AbstractBus {
         return this.currentData ;
     }
     
-    public int[] getCurrentDataAsBin() {
-        return super.convertToBin( this.currentData ) ;
+    public BitSet getCurrentDataAsBin() {
+        return PiUtils.convertToBitSet( this.currentData ) ;
     }
 }

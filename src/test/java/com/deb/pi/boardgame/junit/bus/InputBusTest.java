@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat ;
 import org.junit.Before ;
 import org.junit.Test ;
 
-import com.deb.pi.boardgame.core.bus.InputBus ;
+import com.deb.pi.boardgame.core.bus.ParallelInputBus ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
@@ -32,7 +32,7 @@ public class InputBusTest {
         InPin p1 = pi.getInputPin( 1 ) ;
         InPin p2 = pi.getInputPin( 2 ) ;
         
-        InputBus bus = new InputBus( p0, p1, p2 ) ;
+        ParallelInputBus bus = new ParallelInputBus( p0, p1, p2 ) ;
         assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
         
         ((MockInPin)p0).setCurrentState( State.HIGH ) ;
@@ -45,7 +45,7 @@ public class InputBusTest {
         InPin p1 = pi.getInputPin( 1 ) ;
         InPin p2 = pi.getInputPin( 2 ) ;
         
-        InputBus bus = new InputBus( p0, p1, p2 ) ;
+        ParallelInputBus bus = new ParallelInputBus( p0, p1, p2 ) ;
         assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
         
         ((MockInPin)p1).setCurrentState( State.HIGH ) ;
@@ -58,7 +58,7 @@ public class InputBusTest {
         InPin p1 = pi.getInputPin( 1 ) ;
         InPin p2 = pi.getInputPin( 2 ) ;
         
-        InputBus bus = new InputBus( p0, p1, p2 ) ;
+        ParallelInputBus bus = new ParallelInputBus( p0, p1, p2 ) ;
         assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
         
         ((MockInPin)p0).setCurrentState( State.HIGH ) ;
