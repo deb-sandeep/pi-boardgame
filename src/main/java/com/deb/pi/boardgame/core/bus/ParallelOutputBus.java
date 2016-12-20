@@ -29,7 +29,6 @@ public class ParallelOutputBus extends AbstractBus {
     }
     
     public void setData( int data ) {
-        
         checkDataSize( data ) ;
         BitSet pinStates = PiUtils.convertToBitSet( data ) ;
         setData( pinStates ) ;

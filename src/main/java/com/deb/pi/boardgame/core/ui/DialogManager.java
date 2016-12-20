@@ -45,10 +45,8 @@ public class DialogManager {
     }
     
     private void show( Dialog d ) {
-        if( d == null ) {
-            lcd.clearDisplay() ;
-        }
-        else {
+        lcd.clearDisplay() ;
+        if( d != null ) {
             String[] lines = convertDialogToStringArray( d ) ;
             lcd.showScreen( lines ) ;
         }
