@@ -16,7 +16,9 @@ public class OutputBusExample {
             bus.setData( nextDataOnBus ) ;
             System.out.println( bus.getCurrentDataAsDec() ) ;
             
-            Thread.sleep( 100 ) ;
+            if( bus.getCurrentDataAsDec() != nextDataOnBus ) {
+                throw new IllegalStateException( "Buurrajjjj" ) ;
+            }
             
             nextDataOnBus = (nextDataOnBus == 15) ? 0 : nextDataOnBus+1 ;
             iterationCount++ ;

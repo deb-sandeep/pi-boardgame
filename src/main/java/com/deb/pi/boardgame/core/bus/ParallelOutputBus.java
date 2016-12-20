@@ -31,14 +31,74 @@ public class ParallelOutputBus extends AbstractBus {
     public void setData( int data ) {
         
         checkDataSize( data ) ;
-        
         BitSet pinStates = PiUtils.convertToBitSet( data ) ;
+        setData( pinStates ) ;
+    }
+    
+    public void setData( BitSet pinStates ) {
         for( int i=0; i<pins.length; i++ ) {
             State state = pinStates.get( i ) ? State.HIGH : State.LOW ;
-            pins[i].setState( state ) ;
+            if( pins[i].getState() != state ) {
+                pins[i].setState( state ) ;
+            }
         }
-        this.currentData = data ;
+        this.currentData = PiUtils.convertToInt( pinStates ) ;
         super.broadcastNewDataOnBus( this.currentData ) ;
+    }
+    
+    public void setDataOR( BitSet pinStates ) {
+        pinStates.or( getCurrentDataAsBin() ) ;
+        setData( pinStates ) ;
+    }
+    
+    public void setDataAND( BitSet pinStates ) {
+        pinStates.and( getCurrentDataAsBin() ) ;
+        setData( pinStates ) ;
+    }
+    
+    public void setDataXOR( BitSet pinStates ) {
+        pinStates.xor( getCurrentDataAsBin() ) ;
+        setData( pinStates ) ;
+    }
+    
+    public void shiftLeft() {
+        shiftLeft( false ) ;
+    }
+    
+    public void shiftLeft( boolean zeroBitState ) {
+        BitSet nextState = getCurrentDataAsBin() ;
+        for( int i=pins.length-2; i>=0; i-- ) {
+            nextState.set( i+1, nextState.get( i ) ) ;
+        }
+        nextState.set( 0, zeroBitState ) ;
+        setData( nextState ) ;
+    }
+    
+    public void shiftRight() {
+        shiftRight( false ) ;
+    }
+    
+    public void shiftRight( boolean highBitState ) {
+        BitSet nextState = getCurrentDataAsBin() ;
+        for( int i=1; i<=pins.length-1; i++ ) {
+            nextState.set( i-1, nextState.get( i ) ) ;
+        }
+        nextState.set( pins.length-1, highBitState ) ;
+        setData( nextState ) ;
+    }
+    
+    public void setLow( int pinNum ) {
+        setPin( pinNum, false ) ;
+    }
+    
+    public void setHigh( int pinNum ) {
+        setPin( pinNum, true ) ;
+    }
+    
+    public void setPin( int pinNum, boolean b ) {
+        BitSet nextState = getCurrentDataAsBin() ;
+        nextState.set( pinNum, b ) ;
+        setData( nextState ) ;
     }
 
     public int getCurrentDataAsDec() {
