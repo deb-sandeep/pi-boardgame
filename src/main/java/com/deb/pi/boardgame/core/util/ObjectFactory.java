@@ -2,6 +2,7 @@ package com.deb.pi.boardgame.core.util ;
 
 import org.springframework.context.support.GenericXmlApplicationContext ;
 
+import com.deb.pi.boardgame.core.device.LCD ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 
 /**
@@ -23,6 +24,7 @@ public class ObjectFactory {
             "classpath:com/deb/pi/boardgame/bean-def-mock.xml" ;
     
     private static final String BN_GPIO_MANAGER = "GPIOManager" ;
+    private static final String BN_LCD          = "LCD" ;
     
     private static String customResourcePath = null ;
     private static ObjectFactory instance = null ;
@@ -87,5 +89,9 @@ public class ObjectFactory {
     
     public GPIOManager getGPIOManager() {
         return getBean( BN_GPIO_MANAGER, GPIOManager.class ) ;
+    }
+    
+    public LCD getLCD() {
+        return getBean( BN_LCD, LCD.class ) ;
     }
 }

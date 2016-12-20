@@ -9,4 +9,7 @@
          class="com.deb.pi.boardgame.core.gpio.impl.pi.PiGPIOManager">
    </bean>
    
+   <bean id="LCD"
+         class="com.deb.pi.boardgame.core.device.impl.pi.LCDImpl">
+   </bean>
 </beans>

@@ -9,4 +9,8 @@
          class="com.deb.pi.boardgame.core.gpio.impl.mock.MockGPIOManager">
    </bean>
    
+   <bean id="LCD"
+         class="com.deb.pi.boardgame.core.device.impl.mock.MockLCDImpl">
+   </bean>
+   
 </beans>
