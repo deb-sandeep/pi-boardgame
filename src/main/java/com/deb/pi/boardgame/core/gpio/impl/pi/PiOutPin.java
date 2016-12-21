@@ -8,7 +8,7 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput ;
 
 public class PiOutPin extends AbstractPinImpl implements OutPin {
 
-    private static Logger log = Logger.getLogger( PiOutPin.class ) ;
+    static Logger log = Logger.getLogger( PiOutPin.class ) ;
     
     private GpioPinDigitalOutput piOutPin = null ;
     
@@ -19,7 +19,6 @@ public class PiOutPin extends AbstractPinImpl implements OutPin {
 
     @Override
     public void setState( State state ) {
-        log.debug( "Setting pin " + getPinNum() + " to " + state ) ;
         piOutPin.setState( translateToPinState( state ) ) ;
     }
     

@@ -7,7 +7,7 @@ import com.deb.pi.boardgame.core.gpio.impl.AbstractPinImpl ;
 
 public class MockOutPin extends AbstractPinImpl implements OutPin {
     
-    private static Logger log = Logger.getLogger( MockOutPin.class ) ;
+    static Logger log = Logger.getLogger( MockOutPin.class ) ;
 
     private State state = null ;
     
@@ -18,7 +18,6 @@ public class MockOutPin extends AbstractPinImpl implements OutPin {
 
     @Override
     public void setState( State state ) {
-        log.debug( "Setting pin " + getPinNum() + " to " + state ) ;
         this.state = state ;
     }
     

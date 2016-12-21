@@ -2,6 +2,8 @@ package com.deb.pi.boardgame.junit.bus;
 
 import static org.junit.Assert.assertEquals ;
 
+import java.util.BitSet ;
+
 import org.junit.Before ;
 import org.junit.Test ;
 
@@ -73,5 +75,22 @@ public class OutputBusBitOpTest {
         
         bus.shiftRight() ;
         assertEquals( PiUtils.convertToBitSet( 0 ), bus.getCurrentDataAsBin() ) ;
+    }
+    
+    @Test
+    public void ticTacToeBoardMultiLighting() {
+        
+        OutPin p0 = pi.getOutputPin( 0 ) ;
+        OutPin p1 = pi.getOutputPin( 1 ) ;
+        OutPin p2 = pi.getOutputPin( 2 ) ;
+        
+        ParallelOutputBus bus = new ParallelOutputBus( p0, p1, p2 ) ;
+        bus.setData( 1 ) ;
+        assertEquals( PiUtils.convertToBitSet( 1 ), bus.getCurrentDataAsBin() ) ;
+
+        bus.setData( 2 ) ;
+        BitSet bs = new BitSet() ;
+        bs.set( 1 ) ;
+        assertEquals( bs, bus.getCurrentDataAsBin() ) ;
     }
 }
