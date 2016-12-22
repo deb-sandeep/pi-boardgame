@@ -13,7 +13,7 @@ public class TTTBoardLighting {
     
     public TTTBoardLighting() {
         colBus = new ParallelOutputBus( 0, 1, 2, 3, 4, 5 ) ;
-        rowBus = new ParallelOutputBus( 6, 7, 15 ) ;
+        rowBus = new ParallelOutputBus( 6 ) ;
     }
     
     public void runSimulation() throws Exception {
@@ -22,7 +22,7 @@ public class TTTBoardLighting {
             for( int row=0; row<3; row++ ) {
                 for( int col=0; col<3; col++ ) {
                     lightCell( row, col, CellState.RED ) ;
-                    Thread.sleep( 100 ) ;
+                    Thread.sleep( 1 ) ;
                 }
             }
         }
@@ -82,7 +82,7 @@ public class TTTBoardLighting {
             BitSet bs = pattern[row] ;
             rowBus.setData( 0 ) ;
             colBus.setData( bs ) ;
-            rowBus.setData( (int)Math.pow( 2, row ) );
+            rowBus.setData( 1 );
             try{
                 Thread.sleep( 5 ) ;
             }
@@ -90,32 +90,40 @@ public class TTTBoardLighting {
         }
     }
     
-    private void lightCell( int row, int col, CellState color ) {
+    private int rowCache = -1;
+    
+    private void lightCell( int row, int col, CellState color ) throws InterruptedException {
         
         int colBusBitNum = col*2 ;
-        int rowBusBitNum = row ;
         
         if( color == CellState.GREEN ) colBusBitNum++ ;
         
         System.out.println( "Setting [" + row + "," + col + "] to " + color ) ;
+        if( rowCache != row ) {
+        	rowBus.setData( 1 );
+        	rowCache = row;
+        }
         colBus.setData( (int)Math.pow( 2, colBusBitNum ) ) ;
-        rowBus.setData( (int)Math.pow( 2, rowBusBitNum ) ) ;
+    	rowBus.setData( 0 );
     }
     
     public void testRows() throws Exception{
         rowBus.setData( 1 );
         colBus.setData( 21 );
+        rowBus.setData( 0 );
         Thread.sleep( 1000 );
-        rowBus.setData( 2 );
+        rowBus.setData( 1 );
         colBus.setData( 21 );
+        rowBus.setData( 0 );
         Thread.sleep( 1000 );
-        rowBus.setData( 4 );
+        rowBus.setData( 1 );
         colBus.setData( 21 );
+        rowBus.setData( 0 );
         Thread.sleep( 1000 );
     }
 
     public static void main( String[] args ) throws Exception {
         TTTBoardLighting driver = new TTTBoardLighting() ;
-        driver.strobePattern();
+        driver.runSimulation();
     }
 }
