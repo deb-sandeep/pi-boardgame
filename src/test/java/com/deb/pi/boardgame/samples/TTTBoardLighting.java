@@ -3,6 +3,9 @@ package com.deb.pi.boardgame.samples;
 import java.util.BitSet ;
 
 import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.gpio.AbstractPin.State;
+import com.deb.pi.boardgame.core.gpio.OutPin;
+import com.deb.pi.boardgame.core.util.ObjectFactory;
 
 public class TTTBoardLighting {
 
@@ -29,10 +32,12 @@ public class TTTBoardLighting {
     
     private ParallelOutputBus colBus = null ;
     private ParallelOutputBus rowBus = null ;
+    private OutPin reset = null;
     
     public TTTBoardLighting() {
         colBus = new ParallelOutputBus( 0, 1, 2, 3, 4, 5 ) ;
         rowBus = new ParallelOutputBus( 6 ) ;
+        reset = ObjectFactory.instance().getGPIOManager().getOutputPin( 7 );
     }
     
     public void runSimulation() throws Exception {
@@ -67,12 +72,20 @@ public class TTTBoardLighting {
             {0, 0, 0},
             {1, 0, 1},
         } ) ;
+        
+        reset.setState( State.HIGH );
+        Thread.sleep( 10 );
+        reset.setState( State.LOW );
                 
-        for( int iter=0; iter<25; iter++ ) {
+        for( int iter=0; iter<5; iter++ ) {
         	for( int i=0; i<patterns.length; i++ ) {
-        		showPattern( patterns[i], 1000 ) ;
+        		showPattern( patterns[i], 2000 ) ;
         	}
         }
+        
+        reset.setState( State.HIGH );
+        Thread.sleep( 10 );
+        reset.setState( State.LOW );
     }
     
     private void showPattern( Pattern pattern, int displayTime ) throws Exception{
@@ -85,14 +98,22 @@ public class TTTBoardLighting {
     		elapsedTime = System.currentTimeMillis() - startTime ;
     	}
     }
+
+    private boolean firstRun = true;
     
     private void strobePattern( Pattern pattern ) throws Exception{
-        
+
         for( int row=0; row<3; row++ ) {
-            BitSet bs = pattern.getBitSet(row) ;
-            rowBus.setData( 0 ) ;
-            colBus.setData( bs ) ;
-            rowBus.setData( 1 );
+        	BitSet bs = pattern.getBitSet(row) ;
+        	if( firstRun ) {
+        		System.out.println( "first run..." );
+        		firstRun = false;
+        	}
+        	else {
+	            rowBus.setData( 0 ) ;
+	            rowBus.setData( 1 );
+        	}
+	        colBus.setData( bs ) ;
             try{
                 Thread.sleep( 5 ) ;
             }
@@ -109,6 +130,7 @@ public class TTTBoardLighting {
         if( color == CellState.GREEN ) colBusBitNum++ ;
         
         System.out.println( "Setting [" + row + "," + col + "] to " + color ) ;
+        
         if( rowCache != row ) {
         	rowBus.setData( 1 );
         	rowCache = row;
@@ -134,6 +156,6 @@ public class TTTBoardLighting {
 
     public static void main( String[] args ) throws Exception {
         TTTBoardLighting driver = new TTTBoardLighting() ;
-        driver.testRows();;
+        driver.strobePattern();
     }
 }
