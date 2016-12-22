@@ -7,6 +7,25 @@ import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
 public class TTTBoardLighting {
 
     private static enum CellState { RED, GREEN } ;
+
+    private class Pattern {
+    	
+    	private BitSet[] bitSets = new BitSet[3] ;
+    	
+    	public Pattern( int[][] data ) {
+            for( int row=0; row<3; row++ ) {
+                BitSet bs = new BitSet(6) ;
+                for( int col=0; col<3; col++ ) {
+                    if( data[row][col] == 1 ) bs.set( col*2 ) ;
+                }
+                bitSets[row] = bs ;
+            }
+    	}
+    	
+    	public BitSet getBitSet( int row ) {
+    		return bitSets[row] ;
+    	}
+    }
     
     private ParallelOutputBus colBus = null ;
     private ParallelOutputBus rowBus = null ;
@@ -30,56 +49,47 @@ public class TTTBoardLighting {
     
     public void strobePattern() throws Exception {
 
-        int[][] xPattern = new int[][] {
+    	Pattern patterns[] = new Pattern[3] ;
+        patterns[0] = new Pattern( new int[][] {
             {0, 1, 0},
             {1, 0, 1},
             {0, 1, 0}
-        } ;
-        int[][] yPattern = new int[][] {
+        } ) ;
+        
+        patterns[1] = new Pattern( new int[][] {
             {1, 0, 1},
             {0, 1, 0},
             {1, 0, 1},
-        };
+        } ) ;
         
-        BitSet[] rowBitSets1 = new BitSet[3] ;
-        for( int row=0; row<3; row++ ) {
-            BitSet bs = new BitSet(6) ;
-            for( int col=0; col<3; col++ ) {
-                if( xPattern[row][col] == 1 ) bs.set( col*2 ) ;
-            }
-            rowBitSets1[row] = bs ;
-        }
-        
-        BitSet[] rowBitSets2 = new BitSet[3] ;
-        for( int row=0; row<3; row++ ) {
-            BitSet bs = new BitSet(6) ;
-            for( int col=0; col<3; col++ ) {
-                if( yPattern[row][col] == 1 ) bs.set( col*2 ) ;
-            }
-            rowBitSets2[row] = bs ;
-        }
-        
-        for( int iter=0; iter<1000; iter++ ) {
-            strobePattern( rowBitSets1 ) ;
-        }
-        for( int iter=0; iter<1000; iter++ ) {
-            strobePattern( rowBitSets2 ) ;
-        }
-        for( int iter=0; iter<1000; iter++ ) {
-            strobePattern( rowBitSets1 ) ;
-        }
-        for( int iter=0; iter<1000; iter++ ) {
-            strobePattern( rowBitSets2 ) ;
-        }
-        for( int iter=0; iter<1000; iter++ ) {
-            strobePattern( rowBitSets1 ) ;
+        patterns[2] = new Pattern( new int[][] {
+            {1, 0, 1},
+            {0, 0, 0},
+            {1, 0, 1},
+        } ) ;
+                
+        for( int iter=0; iter<25; iter++ ) {
+        	for( int i=0; i<patterns.length; i++ ) {
+        		showPattern( patterns[i], 1000 ) ;
+        	}
         }
     }
     
-    private void strobePattern( BitSet[] pattern ) {
+    private void showPattern( Pattern pattern, int displayTime ) throws Exception{
+    	
+    	long startTime = System.currentTimeMillis() ;
+    	long elapsedTime = 0 ;
+    	
+    	while( elapsedTime < displayTime ) {
+    		strobePattern( pattern ) ;
+    		elapsedTime = System.currentTimeMillis() - startTime ;
+    	}
+    }
+    
+    private void strobePattern( Pattern pattern ) throws Exception{
         
         for( int row=0; row<3; row++ ) {
-            BitSet bs = pattern[row] ;
+            BitSet bs = pattern.getBitSet(row) ;
             rowBus.setData( 0 ) ;
             colBus.setData( bs ) ;
             rowBus.setData( 1 );
@@ -124,6 +134,6 @@ public class TTTBoardLighting {
 
     public static void main( String[] args ) throws Exception {
         TTTBoardLighting driver = new TTTBoardLighting() ;
-        driver.runSimulation();
+        driver.testRows();;
     }
 }
