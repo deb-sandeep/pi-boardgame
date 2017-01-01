@@ -1,26 +1,8 @@
 package com.deb.pi.boardgame.samples;
 
-import java.io.IOException ;
-
 import com.deb.pi.boardgame.core.bus.OutputBus ;
-import com.deb.pi.boardgame.core.bus.impl.output.BaseHardwareOutputBus ;
-import com.tomgibara.bits.BitVector ;
 
 public class HardwareOutputBusExample {
-    
-    private class TestHWOutputBus extends BaseHardwareOutputBus {
-
-        protected TestHWOutputBus() {
-            super( 8 ) ;
-            startDaemon() ;
-        }
-
-        @Override
-        protected void setHardwareBusState( BitVector newState )
-                throws IOException {
-            System.out.println( "Writing to HW " + newState + "\n" ) ;
-        }
-    }
     
     private class BusWriter extends Thread {
         
@@ -52,7 +34,7 @@ public class HardwareOutputBusExample {
     
     public void run() throws Exception {
         
-        TestHWOutputBus bus = new TestHWOutputBus() ;
+        TestHWOutputBus bus = new TestHWOutputBus( 8 ) ;
         OutputBus ob1 = (OutputBus)bus.getSubBus( 0, 4 ) ;
         OutputBus ob2 = (OutputBus)bus.getSubBus( 4, 4 ) ;
         
