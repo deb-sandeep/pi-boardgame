@@ -1,55 +1,86 @@
 package com.deb.pi.boardgame.junit.bus;
 
 import static org.hamcrest.CoreMatchers.equalTo ;
-import static org.junit.Assert.assertEquals ;
 import static org.junit.Assert.assertThat ;
+
+import java.io.IOException ;
+import java.math.BigInteger ;
 
 import org.junit.Before ;
 import org.junit.Test ;
 
-import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
-import com.deb.pi.boardgame.core.gpio.GPIOManager ;
-import com.deb.pi.boardgame.core.gpio.OutPin ;
-import com.deb.pi.boardgame.core.util.ObjectFactory ;
-import com.deb.pi.boardgame.core.util.PiUtils ;
+import com.deb.pi.boardgame.core.bus.Bus ;
+import com.deb.pi.boardgame.core.bus.OutputBus ;
+import com.deb.pi.boardgame.core.bus.impl.output.OutputBusBase ;
+import com.deb.pi.boardgame.core.bus.impl.output.OutputSubBus ;
+import com.tomgibara.bits.BitVector ;
 
 public class OutputBusTest {
+
+    private class SimpleOutputBus extends OutputBusBase {
+
+        public SimpleOutputBus() {
+            super( 8 ) ;
+        }
+        
+        @Override
+        public Bus getSubBus( int startWireNum, int numWires ) { 
+            return new OutputSubBus( this, startWireNum, numWires ) ;
+        }
+
+        @Override
+        public void write( BitVector wireStates, int startWire, int numWires ) {
+            updateNewBusState( wireStates, startWire, numWires ) ;
+        }
+    }
     
-    private GPIOManager pi = null ;
+    private SimpleOutputBus bus = null ;
     
     @Before
     public void beforeTest() {
-        if( pi != null ) {
-            pi.reset() ;
-        }
-        pi = ObjectFactory.instance().getGPIOManager() ;
+        bus = new SimpleOutputBus() ;
     }
-
+    
     @Test
-    public void simpleOutput() {
-        OutPin p0 = pi.getOutputPin( 0 ) ;
-        OutPin p1 = pi.getOutputPin( 1 ) ;
-        OutPin p2 = pi.getOutputPin( 2 ) ;
+    public void simpleOutput() throws IOException {
         
-        ParallelOutputBus bus = new ParallelOutputBus( p0, p1, p2 ) ;
-        assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
+        assertThat( 0, equalTo( (int)bus.getStateAsLong() ) ) ;
         
-        bus.setData( 2 ) ;
-        assertEquals( PiUtils.convertToBitSet( 2 ), bus.getCurrentDataAsBin() ) ;
+        bus.write( 3 ) ;
+        assertThat( 3, equalTo( (int)bus.getStateAsLong() ) ) ;
         
-        bus.setData( 3 ) ;
-        assertEquals( PiUtils.convertToBitSet( 3 ), bus.getCurrentDataAsBin() ) ;
+        bus.write( 2, true ) ;
+        assertThat( 7, equalTo( (int)bus.getStateAsLong() ) ) ;
+        
+        bus.write( BitVector.fromBigInteger( BigInteger.valueOf( 8 ), 8 ) ) ;
+        assertThat( 8, equalTo( (int)bus.getStateAsLong() ) ) ;
     }
-
-    @Test( expected=IllegalArgumentException.class )
-    public void dataOverflow() {
-        OutPin p0 = pi.getOutputPin( 0 ) ;
-        OutPin p1 = pi.getOutputPin( 1 ) ;
-        OutPin p2 = pi.getOutputPin( 2 ) ;
+    
+    @Test
+    public void subBus() throws Exception {
         
-        ParallelOutputBus bus = new ParallelOutputBus( p0, p1, p2 ) ;
-        assertThat( bus.getCurrentDataAsDec(), equalTo( 0 ) ) ;
-
-        bus.setData( 24 ) ;
+        OutputBus sb1 = (OutputBus)bus.getSubBus( 4, 4 ) ;
+        sb1.write( 4 ) ;
+        
+        OutputBus sb2 = (OutputBus)bus.getSubBus( 0, 4 ) ;
+        sb2.write( 3 ) ;
+        
+        assertThat( 0b01000011, equalTo( (int)bus.getStateAsLong() ) ) ;
+    }
+    
+    @Test
+    public void subSubBus() throws Exception {
+        
+        OutputBus sb1 = (OutputBus)bus.getSubBus( 4, 4 ) ;
+        OutputBus sb2 = (OutputBus)sb1.getSubBus( 2, 2 ) ;
+        OutputBus sb3 = (OutputBus)bus.getSubBus( 0, 2 ) ;
+        
+        sb2.write( 2 ) ;
+        sb3.write( 3 ) ;
+        
+        assertThat( 0b10000011, equalTo( (int)bus.getStateAsLong() ) ) ;
+        assertThat( 0b00001000, equalTo( (int)sb1.getStateAsLong() ) ) ;
+        assertThat( 0b00000010, equalTo( (int)sb2.getStateAsLong() ) ) ;
+        assertThat( 0b00000011, equalTo( (int)sb3.getStateAsLong() ) ) ;
     }
 }
