@@ -2,9 +2,9 @@ package com.deb.pi.boardgame.samples;
 
 import java.util.concurrent.ThreadLocalRandom ;
 
-import com.deb.pi.boardgame.core.bus.AbstractBus ;
+import com.deb.pi.boardgame.core.bus.Bus ;
 import com.deb.pi.boardgame.core.bus.BusListener ;
-import com.deb.pi.boardgame.core.bus.ParallelInputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelInputBus ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.impl.mock.MockInPin ;
@@ -17,8 +17,8 @@ public class InputBusExample {
         
         iBus.addBusListener( new BusListener() {
             @Override
-            public void newDataAvailable( AbstractBus bus ) {
-                System.out.println( "Bus has new data - " + bus.getCurrentDataAsDec() ) ;
+            public void stateChanged( Bus bus ) {
+                System.out.println( "Bus has new data - " + bus.getStateAsLong() ) ;
             }
         } ) ;
         

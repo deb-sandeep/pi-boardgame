@@ -6,7 +6,7 @@ import static org.junit.Assert.assertThat ;
 import org.junit.Before ;
 import org.junit.Test ;
 
-import com.deb.pi.boardgame.core.bus.ParallelInputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelInputBus ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;

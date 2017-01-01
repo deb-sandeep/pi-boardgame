@@ -1,4 +1,4 @@
-package com.deb.pi.boardgame.core.bus;
+package com.deb.pi.boardgame.core.bus.impl.old;
 
 import java.util.BitSet ;
 import java.util.HashMap ;

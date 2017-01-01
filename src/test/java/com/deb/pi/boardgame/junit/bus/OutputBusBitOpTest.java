@@ -7,7 +7,7 @@ import java.util.BitSet ;
 import org.junit.Before ;
 import org.junit.Test ;
 
-import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelOutputBus ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;

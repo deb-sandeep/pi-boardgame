@@ -1,6 +1,6 @@
 package com.deb.pi.boardgame.samples;
 
-import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelOutputBus ;
 
 public class OutputBusExample {
 

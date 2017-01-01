@@ -1,9 +1,9 @@
 package com.deb.pi.boardgame.samples;
 
-import com.deb.pi.boardgame.core.bus.AbstractBus ;
+import com.deb.pi.boardgame.core.bus.Bus ;
 import com.deb.pi.boardgame.core.bus.BusListener ;
-import com.deb.pi.boardgame.core.bus.ParallelInputBus ;
-import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelInputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelOutputBus ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
 public class SimpleInputBus {
@@ -13,8 +13,8 @@ public class SimpleInputBus {
         ParallelInputBus iBus = new ParallelInputBus( 1 ) ;
         iBus.addBusListener( new BusListener() {
             @Override
-            public void newDataAvailable( AbstractBus bus ) {
-                System.out.println( "Bus has new data - " + bus.getCurrentDataAsDec() ) ;
+            public void stateChanged( Bus bus ) {
+                System.out.println( "Bus has new data - " + bus.getStateAsLong() ) ;
             }
         } ) ;
         

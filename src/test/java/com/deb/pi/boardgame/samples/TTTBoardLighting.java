@@ -2,7 +2,7 @@ package com.deb.pi.boardgame.samples;
 
 import java.util.BitSet ;
 
-import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.bus.impl.old.ParallelOutputBus ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State;
 import com.deb.pi.boardgame.core.gpio.OutPin;
 import com.deb.pi.boardgame.core.util.ObjectFactory;

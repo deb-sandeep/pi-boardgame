@@ -1,9 +1,11 @@
-package com.deb.pi.boardgame.core.bus;
+package com.deb.pi.boardgame.core.bus.impl.old;
 
 import java.util.BitSet ;
 import java.util.HashSet ;
 import java.util.Set ;
 
+import com.deb.pi.boardgame.core.bus.Bus ;
+import com.deb.pi.boardgame.core.bus.BusListener ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 
 public abstract class AbstractBus {
@@ -39,7 +41,7 @@ public abstract class AbstractBus {
     
     protected void broadcastNewDataOnBus( int data ) {
         for( BusListener l : listeners ) {
-            l.newDataAvailable( this ) ;
+            l.stateChanged( (Bus)this ) ;
         }        
     }
     
