@@ -27,7 +27,7 @@ public class TTTBoardPattern {
     public void run() throws Exception {
         
         spiBus.clear() ;
-        for( int i=0; i<60u; i++ ) {
+        for( int i=0; i<30; i++ ) {
             renderPattern( getBoardPattern( i%2 ), 1 ) ;
         }
         spiBus.clear() ;
