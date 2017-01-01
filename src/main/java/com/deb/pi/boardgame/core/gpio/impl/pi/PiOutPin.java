@@ -16,7 +16,7 @@ public class PiOutPin extends AbstractPinImpl implements OutPin {
         super( pinNum ) ;
         this.piOutPin = piOutPin ;
     }
-
+    
     @Override
     public void setState( State state ) {
         piOutPin.setState( translateToPinState( state ) ) ;
@@ -29,5 +29,15 @@ public class PiOutPin extends AbstractPinImpl implements OutPin {
     
     public GpioPinDigitalOutput getPiPin() {
         return this.piOutPin ;
+    }
+
+    @Override
+    public void pulse() {
+        pulse( 1 ) ;
+    }
+    
+    @Override
+    public void pulse( int pulseWidthInMillis ) {
+        piOutPin.pulse( pulseWidthInMillis ) ;
     }
 }

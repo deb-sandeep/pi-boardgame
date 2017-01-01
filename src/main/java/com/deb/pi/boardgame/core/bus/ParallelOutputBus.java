@@ -2,13 +2,18 @@ package com.deb.pi.boardgame.core.bus;
 
 import java.util.BitSet ;
 
+import org.apache.log4j.Logger ;
+
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 import com.deb.pi.boardgame.core.util.PiUtils ;
 
-public class ParallelOutputBus extends AbstractBus {
+public class ParallelOutputBus extends AbstractBus 
+    implements OutputBus {
+    
+    static Logger log = Logger.getLogger( ParallelInputBus.class ) ;
 
     private OutPin[] pins = null ;
     private int currentData = 0 ;
@@ -35,6 +40,7 @@ public class ParallelOutputBus extends AbstractBus {
     }
     
     public void setData( BitSet pinStates ) {
+        
         for( int i=0; i<pins.length; i++ ) {
             State state = pinStates.get( i ) ? State.HIGH : State.LOW ;
             if( pins[i].getState() != state ) {

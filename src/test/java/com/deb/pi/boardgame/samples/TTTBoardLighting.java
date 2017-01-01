@@ -2,17 +2,20 @@ package com.deb.pi.boardgame.samples;
 
 import java.util.BitSet ;
 
+import com.deb.pi.boardgame.core.bus.OutputBus ;
 import com.deb.pi.boardgame.core.bus.ParallelOutputBus ;
+import com.deb.pi.boardgame.core.gpio.OutPin ;
+import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
 public class TTTBoardLighting {
 
     private static enum CellState { RED, GREEN } ;
 
     private class Pattern {
-    	
-    	private BitSet[] bitSets = new BitSet[3] ;
-    	
-    	public Pattern( int[][] data ) {
+        
+        private BitSet[] bitSets = new BitSet[3] ;
+        
+        public Pattern( int[][] data ) {
             for( int row=0; row<3; row++ ) {
                 BitSet bs = new BitSet(6) ;
                 for( int col=0; col<3; col++ ) {
@@ -20,19 +23,21 @@ public class TTTBoardLighting {
                 }
                 bitSets[row] = bs ;
             }
-    	}
-    	
-    	public BitSet getBitSet( int row ) {
-    		return bitSets[row] ;
-    	}
+        }
+        
+        public BitSet getBitSet( int row ) {
+            return bitSets[row] ;
+        }
     }
     
-    private ParallelOutputBus colBus = null ;
-    private ParallelOutputBus rowBus = null ;
+    private OutputBus colBus = null ;
+    private OutputBus rowBus = null ;
+    private OutPin strobePulsePin = null ;
     
     public TTTBoardLighting() {
         colBus = new ParallelOutputBus( 0, 1, 2, 3, 4, 5 ) ;
         rowBus = new ParallelOutputBus( 6 ) ;
+        strobePulsePin = ObjectFactory.instance().getGPIOManager().getOutputPin( 7 ) ;
     }
     
     public void runSimulation() throws Exception {
@@ -49,7 +54,7 @@ public class TTTBoardLighting {
     
     public void strobePattern() throws Exception {
 
-    	Pattern patterns[] = new Pattern[3] ;
+        Pattern patterns[] = new Pattern[3] ;
         patterns[0] = new Pattern( new int[][] {
             {0, 1, 0},
             {1, 0, 1},
@@ -69,32 +74,32 @@ public class TTTBoardLighting {
         } ) ;
                 
         for( int iter=0; iter<25; iter++ ) {
-        	for( int i=0; i<patterns.length; i++ ) {
-        		showPattern( patterns[i], 1000 ) ;
-        	}
+            for( int i=0; i<patterns.length; i++ ) {
+                showPattern( patterns[i], 1000 ) ;
+            }
         }
     }
     
     private void showPattern( Pattern pattern, int displayTime ) throws Exception{
-    	
-    	long startTime = System.currentTimeMillis() ;
-    	long elapsedTime = 0 ;
-    	
-    	while( elapsedTime < displayTime ) {
-    		strobePattern( pattern ) ;
-    		elapsedTime = System.currentTimeMillis() - startTime ;
-    	}
+        
+        long startTime = System.currentTimeMillis() ;
+        long elapsedTime = 0 ;
+        
+        while( elapsedTime < displayTime ) {
+            strobePattern( pattern ) ;
+            elapsedTime = System.currentTimeMillis() - startTime ;
+        }
     }
     
     private void strobePattern( Pattern pattern ) throws Exception{
         
         for( int row=0; row<3; row++ ) {
             BitSet bs = pattern.getBitSet(row) ;
-            rowBus.setData( 0 ) ;
+            colBus.setData( 0 ) ;
+            strobePulsePin.pulse() ;
             colBus.setData( bs ) ;
-            rowBus.setData( 1 );
             try{
-                Thread.sleep( 5 ) ;
+                Thread.sleep( 4 ) ;
             }
             catch( Exception e ){}
         }
@@ -110,11 +115,11 @@ public class TTTBoardLighting {
         
         System.out.println( "Setting [" + row + "," + col + "] to " + color ) ;
         if( rowCache != row ) {
-        	rowBus.setData( 1 );
-        	rowCache = row;
+            rowBus.setData( 1 );
+            rowCache = row;
         }
         colBus.setData( (int)Math.pow( 2, colBusBitNum ) ) ;
-    	rowBus.setData( 0 );
+        rowBus.setData( 0 );
     }
     
     public void testRows() throws Exception{

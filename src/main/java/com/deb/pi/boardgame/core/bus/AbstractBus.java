@@ -6,7 +6,7 @@ import java.util.Set ;
 
 import com.deb.pi.boardgame.core.gpio.AbstractPin ;
 
-public abstract class AbstractBus {
+public abstract class AbstractBus implements Bus {
     
     private AbstractPin[] pins = null ;
     private Set<BusListener> listeners = new HashSet<BusListener>() ;

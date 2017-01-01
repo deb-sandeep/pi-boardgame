@@ -13,7 +13,8 @@ import com.deb.pi.boardgame.core.gpio.InPinListener ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 import com.deb.pi.boardgame.core.util.PiUtils ;
 
-public class ParallelInputBus extends AbstractBus implements InPinListener {
+public class ParallelInputBus extends AbstractBus 
+    implements InPinListener, InputBus {
 
     private enum ProcessingState{ IDLE, COLLECTING } ;
     

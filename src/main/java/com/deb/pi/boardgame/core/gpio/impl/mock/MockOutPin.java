@@ -25,4 +25,20 @@ public class MockOutPin extends AbstractPinImpl implements OutPin {
     public State getState() {
         return this.state ;
     }
+
+    @Override
+    public void pulse() {
+        pulse( 1 ) ;
+    }
+    
+    @Override
+    public void pulse( int pulseWidthInMillis ) {
+        setState( State.HIGH ) ;
+        try {
+            Thread.sleep( pulseWidthInMillis ) ;
+        }
+        catch( Exception e ) {
+            // Ignore
+        }
+    }
 }
