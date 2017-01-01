@@ -19,8 +19,8 @@ public class GameBoardHardware {
     private class Cell {
         
         private GamePiece piece     = null ;
-        private GlowState         glowState = GlowState.OFF ;
-        
+        private GlowState glowState = GlowState.OFF ;
+
         Cell() {
             this.glowState = GlowState.OFF ;
         }
@@ -69,15 +69,7 @@ public class GameBoardHardware {
         }
         
         private void strobeCellGlowStates() {
-            for( int row=0; row<numRows; row++ ) {
-                updateBitStatesForRow( row ) ;
-                colsOutputBus.setData( this.colBitStates ) ;
-                rowStrobePin.pulse() ;
-                try {
-                    Thread.sleep( 500 ) ;
-                }
-                catch( Exception e ){}
-            }
+            // TODO
         }
         
         private void updateBitStatesForRow( int row ) {
@@ -125,8 +117,6 @@ public class GameBoardHardware {
         
         Assert.isTrue( numRows > 0, "Num rows must be greater than 0" ) ;
         Assert.isTrue( numCols > 0, "Num cols must be greater than 0" ) ;
-        Assert.isTrue( colSignalBus.getNumPins() == numCols*2, 
-                       "Column signal bus size should be " + numCols*2 + " bits" ) ;
         
         this.numRows = numRows ;
         this.numCols = numCols ;
