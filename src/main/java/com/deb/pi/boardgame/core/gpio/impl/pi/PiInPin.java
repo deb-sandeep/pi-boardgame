@@ -30,4 +30,10 @@ public class PiInPin extends AbstractInPinImpl
         State newState = AbstractPinImpl.translateToState( event.getState() ) ;
         super.setCurrentState( newState ) ;
     }
+    
+    @Override
+    public State getState() {
+        super.setCurrentState( AbstractPinImpl.translateToState( piInPin.getState() ) ) ;
+        return super.getState() ;
+    }
 }

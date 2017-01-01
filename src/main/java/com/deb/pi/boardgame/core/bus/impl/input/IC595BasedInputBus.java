@@ -20,7 +20,7 @@ public class IC595BasedInputBus extends BusBase
     private OutputBus probeBus = null ;
     private InPin readPin = null ;
     
-    protected IC595BasedInputBus( OutputBus probeBus, InPin readPin ) {
+    public IC595BasedInputBus( OutputBus probeBus, InPin readPin ) {
         super( probeBus.size() ) ;
         this.probeBus = probeBus ;
         this.readPin = readPin ;
@@ -43,7 +43,7 @@ public class IC595BasedInputBus extends BusBase
         log.debug( "Setting probe bus to high." ) ;
         probeBus.setHigh() ;
         
-        if( readPin.getState() == State.LOW ) {
+        if( readPin.isLow() ) {
             log.debug( "Read pin is LOW. None of the switches are HIGH" ) ;
             super.setNewBusState( newState ) ;
         }
@@ -68,6 +68,7 @@ public class IC595BasedInputBus extends BusBase
                 }
             }
         }
+        log.debug( "--------------------------------------------\n" ) ;
         return newState ;
     }
 }

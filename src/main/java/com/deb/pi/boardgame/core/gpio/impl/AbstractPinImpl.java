@@ -22,4 +22,14 @@ public abstract class AbstractPinImpl implements AbstractPin {
     protected static State translateToState( PinState pinState ) {
         return pinState == PinState.HIGH ? State.HIGH : State.LOW ;
     }
+
+    @Override
+    public boolean isHigh() {
+        return getState() == State.HIGH ;
+    }
+    
+    @Override
+    public boolean isLow() {
+        return getState() == State.LOW ;
+    }
 }

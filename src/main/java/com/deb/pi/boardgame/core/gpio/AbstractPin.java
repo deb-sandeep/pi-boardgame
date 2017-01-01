@@ -7,4 +7,7 @@ public interface AbstractPin {
     
     public int getPinNum() ;
     public State getState() ;
+
+    public boolean isHigh() ;
+    public boolean isLow() ;
 }
