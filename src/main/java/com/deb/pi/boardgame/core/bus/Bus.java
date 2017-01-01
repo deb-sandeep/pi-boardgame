@@ -4,7 +4,7 @@ import com.tomgibara.bits.BitVector ;
 
 public interface Bus {
 
-    public int getSize() ;
+    public int size() ;
     
     public Bus getSubBus( int startWireNum, int numWires ) ;
     

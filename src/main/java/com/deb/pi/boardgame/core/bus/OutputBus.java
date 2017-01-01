@@ -12,9 +12,13 @@ public interface OutputBus extends Bus {
     
     public void write( int wireNum, boolean state ) throws IOException  ;
     
-    public void write( BitVector wireStates, int startWire ) ;
+    public void write( BitVector wireStates, int startWire ) throws IOException ;
     
-    public void write( BitVector wireStates, int startWire, int numWires ) ;
+    public void write( BitVector wireStates, int startWire, int numWires ) throws IOException ;
     
-    public void write( long state, int startWire, int numWires ) ;
+    public void write( long state, int startWire, int numWires ) throws IOException ;
+    
+    public void setHigh() throws IOException ;
+    
+    public void clear() throws IOException ;
 }

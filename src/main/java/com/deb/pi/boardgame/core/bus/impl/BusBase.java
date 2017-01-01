@@ -50,7 +50,7 @@ public abstract class BusBase implements Bus {
     }
 
     @Override
-    public int getSize() {
+    public int size() {
         return wireState.size() ;
     }
 
@@ -71,7 +71,7 @@ public abstract class BusBase implements Bus {
 
     @Override
     public long getStateAsLong() {
-        return wireState.getBits( 0, getSize() ) ;
+        return wireState.getBits( 0, size() ) ;
     }
 
     @Override

@@ -1,5 +1,7 @@
 package com.deb.pi.boardgame.core.bus.impl.output;
 
+import java.io.IOException ;
+
 import com.deb.pi.boardgame.core.bus.OutputBus ;
 import com.tomgibara.bits.BitVector ;
 
@@ -16,7 +18,9 @@ public class OutputSubBus extends OutputBusBase implements OutputBus {
     }
 
     @Override
-    public void write( BitVector wireStates, int startWire, int numWires ) {
+    public void write( BitVector wireStates, int startWire, int numWires ) 
+        throws IOException {
+        
         parentBus.write( wireStates, parentBusStartWireNum+startWire, numWires ) ;
         updateNewBusState( wireStates, startWire, numWires ) ;
     }

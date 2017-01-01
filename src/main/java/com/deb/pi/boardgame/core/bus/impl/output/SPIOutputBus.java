@@ -4,7 +4,6 @@ import java.io.IOException ;
 
 import org.springframework.util.Assert ;
 
-import com.deb.pi.boardgame.core.bus.Bus ;
 import com.pi4j.io.spi.SpiChannel ;
 import com.pi4j.io.spi.SpiDevice ;
 import com.pi4j.io.spi.SpiFactory ;
@@ -23,15 +22,11 @@ public class SPIOutputBus extends BaseHardwareOutputBus {
         Assert.notNull( channel, "SPI channel can't be null." ) ;
         this.channel = channel ;
         this.bus = SpiFactory.getInstance( channel ) ;
+        super.startDaemon() ;
     }
     
     public SpiChannel getChannel() {
         return this.channel ;
-    }
-
-    @Override
-    public Bus getSubBus( int startWireNum, int numWires ) {
-        return null ;
     }
 
     @Override
