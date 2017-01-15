@@ -53,7 +53,8 @@ public class BoardState {
         
         buffer.append( "\n" ) ;
         for( int i=0; i<numSwitches; i++ ) {
-            buffer.append( "\tSwitch " + i + " = " + switchState[i] + "\n" ) ;
+            buffer.append( "\tSwitch " + i + " = " + 
+                           (switchState[i] ? "ON" : "OFF") + "\n" ) ;
         }
         
         return buffer.toString() ;
