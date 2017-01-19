@@ -15,7 +15,7 @@ public class PiInPin extends AbstractInPinImpl
     PiInPin( int pinNum, GpioPinDigitalInput piInPin ) {
         super( pinNum ) ;
         this.piInPin = piInPin ;
-        this.piInPin.addListener( this ) ;
+        //this.piInPin.addListener( this ) ;
         super.setCurrentState( AbstractPinImpl.translateToState( piInPin.getState() ) );
     }
 

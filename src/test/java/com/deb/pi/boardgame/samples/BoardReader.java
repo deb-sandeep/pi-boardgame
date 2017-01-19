@@ -12,14 +12,13 @@ public class BoardReader {
     
     private static final Logger log = Logger.getLogger( BoardReader.class ) ;
     
-    private static final int NUM_ROWS_GAMEBOARD = 8 ;
-    private static final int NUM_COLS_GAMEBOARD = 8 ;
-    private static final int NUM_COLS_FOR_PROBE = NUM_COLS_GAMEBOARD + 1 ;
-    private static final int SPI_BUS_SIZE       = NUM_COLS_FOR_PROBE + 
-                                                  NUM_ROWS_GAMEBOARD ;
+    private static final int NUM_ROWS_GAMEBOARD = 3 ;
+    private static final int NUM_COLS_GAMEBOARD = 3 ;
+    private static final int SPI_BUS_SIZE       = 17 ;
+    
     private OutputBus spiBus      = null ;
-    private OutputBus colProbeBus = null ;
     private OutputBus rowProbeBus = null ;
+    private OutputBus colProbeBus = null ;
     private InPin     inPin       = null ;
     
     private BoardState boardState = new BoardState( NUM_ROWS_GAMEBOARD, 
@@ -28,19 +27,23 @@ public class BoardReader {
     
     public BoardReader() throws Exception {
         spiBus = new SPIOutputBus( SpiChannel.CS1, SPI_BUS_SIZE ) ;
-        colProbeBus = ( OutputBus )spiBus.getSubBus( 0, NUM_COLS_FOR_PROBE ) ;
-        rowProbeBus = ( OutputBus )spiBus.getSubBus( NUM_COLS_FOR_PROBE, 
-                                                     NUM_ROWS_GAMEBOARD ) ;
+        colProbeBus = ( OutputBus )spiBus.getSubBus( 0, NUM_COLS_GAMEBOARD + 1 ) ;
+        rowProbeBus = ( OutputBus )spiBus.getSubBus( 9, NUM_ROWS_GAMEBOARD ) ;
         
         inPin = ObjectFactory.instance().getGPIOManager().getInputPin( 0 ) ;
     }
     
-    public void run() throws Exception {
+    public void readBoardState() throws Exception {
         refreshBoardState( boardState ) ;
         log.debug( "Board state = " + boardState ) ;
     }
     
-    private void testProbeBusOutput() throws Exception {
+    /**
+     * This function is used to test only the 595 probe circuit without the 
+     * associated 4066 board. In place of the 4066 board, we connect 17 LEDs
+     * to test the row and column probe status.
+     */
+    public void testProbeBusOutput() throws Exception {
         
         log( "Testing probe busses..." ) ;
         
@@ -153,6 +156,9 @@ public class BoardReader {
                 log( "\t\tIn Pin is low" ) ;
                 log( "\t\tNo cells in column " + c + " are occupied." ) ;
             }
+            log( "\tSetting row probe to low" ) ;
+            rowProbeBus.clear() ;
+            Thread.sleep( 5000 ) ;
         }
         
         log( "Reading switch states." ) ;
@@ -168,7 +174,7 @@ public class BoardReader {
         if( inHigh() ) {
             log( "\tIn Pin is high" ) ;
             log( "\tSome switches are on." ) ;
-            log( "\tTrying to determing on switches" ) ;
+            log( "\tTrying to determine on switches" ) ;
             
             rowProbeBus.clear() ;
             log( "\tRow bus cleared." ) ;
@@ -198,14 +204,15 @@ public class BoardReader {
     private void log( String message ) {
         log.debug( message ) ;
         try {
-            Thread.sleep( 100 ) ;
+            Thread.sleep( 1000 ) ;
         }
         catch( Exception e ) {
-            // Goggle
+            // Gobble
         }
     }
     
-    private boolean inHigh() {
+    private boolean inHigh() throws Exception {
+//        Thread.sleep( 5 ) ;
         return inPin.isHigh() ;
     }
 
@@ -213,8 +220,7 @@ public class BoardReader {
         
         log.debug( "Starting BoardReader sample program." ) ;
         
-//        new BoardReader().run() ;
-        new BoardReader().testProbeBusOutput() ;
+        new BoardReader().readBoardState() ;
         ObjectFactory.instance().getGPIOManager().shutdown() ;
         
         log.debug( "Ending BoardReader sample program" ) ;
