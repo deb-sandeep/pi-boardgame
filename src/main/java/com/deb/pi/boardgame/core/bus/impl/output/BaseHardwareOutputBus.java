@@ -13,7 +13,7 @@ import com.tomgibara.bits.BitVector ;
 public abstract class BaseHardwareOutputBus extends OutputBusBase 
     implements OutputBus {
     
-    private static final Logger log = Logger.getLogger( BaseHardwareOutputBus.class ) ;
+    static final Logger log = Logger.getLogger( BaseHardwareOutputBus.class ) ;
     
     private WriterDaemon writerDaemon = null ;
     private LinkedBlockingQueue<WriteRequest> writeRequestQ = null ;
@@ -103,7 +103,6 @@ public abstract class BaseHardwareOutputBus extends OutputBusBase
                     bv.setBit( req.startWire+i, req.bv.getBit( i ) ) ;
                 }
             }
-            log.debug( "\t\t" + bv ) ;
             setHardwareBusState( bv ) ;
             BaseHardwareOutputBus.this.setNewBusState( bv ) ;
             
