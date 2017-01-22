@@ -33,6 +33,7 @@ public class PiInPin extends AbstractInPinImpl
     
     @Override
     public State getState() {
+        System.out.println( "In pin state = " + piInPin.getState() ) ; 
         super.setCurrentState( AbstractPinImpl.translateToState( piInPin.getState() ) ) ;
         return super.getState() ;
     }

@@ -38,4 +38,21 @@ public class PiReadinessChecker {
         }
         throw new IllegalStateException( question ) ;
     }
+    
+    public boolean dialogInput( String message ) {
+        
+        System.out.print( message ) ;
+        System.out.print( " ([Yes]/No) : " ) ;
+        
+        String input = keyboard.nextLine() ;
+        
+        if( StringUtil.isNotNullOrEmpty( input, true ) ) {
+            input = input.trim().toUpperCase() ;
+            if( input.equalsIgnoreCase( "Y" ) || 
+                input.equalsIgnoreCase( "YES" ) ) {
+                return true ;
+            }
+        }
+        return false ;
+    }
 }
