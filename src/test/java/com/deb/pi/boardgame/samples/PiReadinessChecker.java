@@ -19,6 +19,7 @@ public class PiReadinessChecker {
         checkReadiness( "Are pi and external power source grounded together?" ) ;
         checkReadiness( "Is circuit powered by external source?" ) ;
         checkReadiness( "Are any input pins (if present), protected?" ) ;
+        checkReadiness( "Are you sure if a zener 3.3v is used to protect input?" ) ;
     }
     
     private void checkReadiness( String question ) 

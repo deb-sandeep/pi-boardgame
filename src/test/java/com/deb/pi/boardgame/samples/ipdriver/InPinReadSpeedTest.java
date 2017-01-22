@@ -21,7 +21,7 @@ public class InPinReadSpeedTest {
     private InPin inPin = null ;
     
     public InPinReadSpeedTest() throws Exception {
-        spiBus = new SPIOutputBus( SpiChannel.CS1, 8 ) ;
+        spiBus = new SPIOutputBus( SpiChannel.CS1, 1 ) ;
         inPin = ObjectFactory.instance().getGPIOManager().getInputPin( 0 ) ;
         
         spiBus.clear() ;
@@ -29,33 +29,28 @@ public class InPinReadSpeedTest {
     
     public void run() throws Exception {
         
-        int numIterationsPerCycle = 1 ;
-        long delay = 1000 ;
+        int numIterationsPerCycle = 10000 ;
+        long delay = 1 ;
         
         spiBus.clear() ;
         
-        while( delay > 0 ) {
+        log.debug( "Starting test with switch delay = " + delay ) ;
+        
+        for( int i=0; i<numIterationsPerCycle; i++ ) {
+            spiBus.setHigh() ;
+            Assert.state( inPin.getState() == State.HIGH, 
+                          "In pin should be high for a high input" ) ;
             
-            log.debug( "Testing with delay " + delay ) ;
-            for( int i=0; i<numIterationsPerCycle; i++ ) {
-                log.debug( "Switching on" ) ;
-                spiBus.setHigh() ;
-//                Assert.state( inPin.getState() == State.HIGH, 
-//                              "In pin should be high for a high input" ) ;
-                
-                Thread.sleep( delay ) ;
-                
-                log.debug( "Switching off" ) ;
-                spiBus.clear() ;
-//                Assert.state( inPin.getState() == State.LOW, 
-//                              "In pin should be high for a low input" ) ;
-                
-                Thread.sleep( delay ) ;
+            Thread.sleep( delay ) ;
+            
+            spiBus.clear() ;
+            Assert.state( inPin.getState() == State.LOW, 
+                          "In pin should be high for a low input" ) ;
+            
+            Thread.sleep( delay ) ;
+            if( i % 100 == 0 ) {
+                System.out.println( i ) ;
             }
-            if     ( delay > 300 ) delay -= 100 ;
-            else if( delay > 150 ) delay -= 50 ;
-            else if( delay > 100 ) delay -= 30 ;
-            else                   delay -= 1 ;
         }
         
         spiBus.clear() ;
@@ -66,10 +61,10 @@ public class InPinReadSpeedTest {
         spiBus.clear() ;
         for( int i=0; i<5; i++ ) {
             System.out.println( "-------------------------" ) ;
-            spiBus.write( 3, true ) ;
+            spiBus.write( 0, true ) ;
             log.debug( "High" ) ;
             Thread.sleep( 2000 ) ;
-            spiBus.write( 3, false ) ;
+            spiBus.write( 0, false ) ;
             log.debug( "Low" ) ;
             Thread.sleep( 2000 ) ;
         }
@@ -79,9 +74,10 @@ public class InPinReadSpeedTest {
     public static void main( String[] args ) throws Exception {
         
         try {
-//            checker.runPreFlightCheck() ;
-            new InPinReadSpeedTest().test1() ;
+            checker.runPreFlightCheck() ;
+            new InPinReadSpeedTest().run() ;
             ObjectFactory.instance().getGPIOManager().shutdown() ;
+            System.out.println( "Program can be terminated now." ) ;
         }
         catch( IllegalStateException e ) {
             log.error( "\n\nPreflight check failed. Check - " + e.getMessage() ) ;
