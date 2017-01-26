@@ -5,6 +5,7 @@ import org.apache.log4j.Logger ;
 import com.deb.pi.boardgame.core.bus.OutputBus ;
 import com.deb.pi.boardgame.core.bus.impl.output.SPIOutputBus ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
+import com.deb.pi.boardgame.samples.PiReadinessChecker ;
 import com.pi4j.io.spi.SpiChannel ;
 
 // Take the 595 driver circuit, connect all 17 to LEDs and run this test
@@ -72,6 +73,7 @@ public class SPIProbeDriverTest {
     }
     
     public static void main( String[] args ) throws Exception {
+//        new PiReadinessChecker().runPreFlightCheck() ;
         new SPIProbeDriverTest().run() ;
         ObjectFactory.instance().getGPIOManager().shutdown() ;
     }

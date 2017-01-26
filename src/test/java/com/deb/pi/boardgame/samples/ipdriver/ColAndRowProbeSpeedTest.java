@@ -10,12 +10,15 @@ import com.deb.pi.boardgame.core.bus.impl.output.SPIOutputBus ;
 import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.gpio.InPin ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
+import com.deb.pi.boardgame.samples.PiReadinessChecker ;
 import com.pi4j.io.spi.SpiChannel ;
 import com.tomgibara.bits.BitVector ;
 
 public class ColAndRowProbeSpeedTest {
 
     static Logger log = Logger.getLogger( ColAndRowProbeSpeedTest.class ) ;
+    
+    static PiReadinessChecker checker = new PiReadinessChecker() ;
     
     private OutputBus spiBus = null ;
     private OutputBus colProbeBus = null ;
@@ -24,9 +27,9 @@ public class ColAndRowProbeSpeedTest {
     
     public ColAndRowProbeSpeedTest() throws Exception {
         
-        spiBus = new SPIOutputBus( SpiChannel.CS1, 16 ) ;
+        spiBus = new SPIOutputBus( SpiChannel.CS1, 17 ) ;
         colProbeBus = ( OutputBus )spiBus.getSubBus( 0, 8 ) ;
-        rowProbeBus = ( OutputBus )spiBus.getSubBus( 8, 8 ) ;
+        rowProbeBus = ( OutputBus )spiBus.getSubBus( 9, 8 ) ;
         inPin = ObjectFactory.instance().getGPIOManager().getInputPin( 0 ) ;
         
         log.debug( "Busses and input pin created." ) ;
@@ -52,25 +55,31 @@ public class ColAndRowProbeSpeedTest {
     // in a low state, the in pin is always low.
     private void runTest1() throws Exception {
         
-        log.debug( "Running test 1." );
-        spiBus.clear() ;
+        log.debug( "\nRunning test 1." );
+        log.debug( "If row probe is low, doesn't matter what the state of " ) ;
+        log.debug( "column probe, the in pin is always low." ) ;
+        log.debug( "\n" ) ;
         
+        spiBus.clear() ;
+        checker.dialogInput( "LED low" ) ;
         Assert.state( inPin.getState() == State.LOW,
-                      "In pin should be low when row probe bus is at low." ) ;
+                      "1. In pin should be low when row probe bus is at low." ) ;
         
         for( int c=0; c<colProbeBus.size(); c++ ) {
             if( c > 0 )colProbeBus.write( (c-1), false ) ;
             colProbeBus.write( c, true ) ;
             
+            checker.dialogInput( "LED low" ) ;
             Assert.state( inPin.getState() == State.LOW,
-                          "In pin should be low when row probe bus is at low." ) ;
+                          "2. In pin should be low when row probe bus is at low." ) ;
         }
         
         colProbeBus.clear() ;
         for( int i=0; i<Math.pow( 2, colProbeBus.size() ); i++ ) {
             colProbeBus.write( i ) ;
+            
             Assert.state( inPin.getState() == State.LOW,
-                          "In pin should be low when row probe bus is at low." ) ;
+                          "3. In pin should be low when row probe bus is at low." ) ;
         }
         
         spiBus.clear() ;
@@ -99,11 +108,12 @@ public class ColAndRowProbeSpeedTest {
                                                colProbeBus.size() ) ;
                 log.debug( "  Writing to col probe bus" ) ;
                 colProbeBus.write( bv ) ;
-                
+
                 if( bv.getBit( r ) ) {
-                    Assert.state( inPin.getState() == State.HIGH,
-                                  "In pin should be HIGH if corresponding" + 
-                                  " column and row probes are HIGH." ) ;
+                    checker.dialogInput( "LED high" ) ;
+//                    Assert.state( inPin.getState() == State.HIGH,
+//                                  "In pin should be HIGH if corresponding" + 
+//                                  " column and row probes are HIGH." ) ;
                 }
                 
                 if( numTests % 10 == 0 ) {
@@ -119,7 +129,7 @@ public class ColAndRowProbeSpeedTest {
     public static void main( String[] args ) throws Exception {
         
         try {
-//            new PiReadinessChecker().runPreFlightCheck() ;
+//            checker.runPreFlightCheck() ;
             new ColAndRowProbeSpeedTest().run() ;
             ObjectFactory.instance().getGPIOManager().shutdown() ;
         }
