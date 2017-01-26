@@ -41,8 +41,10 @@ public class ColAndRowProbeSpeedTest {
 
         try {
             runTest1() ;
+            log.debug( "Test 1 passed." );
+            
             runTest2() ;
-            log.debug( "Tests passed." );
+            log.debug( "Test 2 passed." );
         }
         catch( IllegalStateException e ) {
             log.error( "Test failed. " + e.getMessage() ) ;
@@ -61,7 +63,7 @@ public class ColAndRowProbeSpeedTest {
         log.debug( "\n" ) ;
         
         spiBus.clear() ;
-        checker.dialogInput( "LED low" ) ;
+//        checker.dialogInput( "LED low" ) ;
         Assert.state( inPin.getState() == State.LOW,
                       "1. In pin should be low when row probe bus is at low." ) ;
         
@@ -69,7 +71,7 @@ public class ColAndRowProbeSpeedTest {
             if( c > 0 )colProbeBus.write( (c-1), false ) ;
             colProbeBus.write( c, true ) ;
             
-            checker.dialogInput( "LED low" ) ;
+//            checker.dialogInput( "LED low" ) ;
             Assert.state( inPin.getState() == State.LOW,
                           "2. In pin should be low when row probe bus is at low." ) ;
         }
@@ -77,7 +79,6 @@ public class ColAndRowProbeSpeedTest {
         colProbeBus.clear() ;
         for( int i=0; i<Math.pow( 2, colProbeBus.size() ); i++ ) {
             colProbeBus.write( i ) ;
-            
             Assert.state( inPin.getState() == State.LOW,
                           "3. In pin should be low when row probe bus is at low." ) ;
         }
@@ -89,11 +90,17 @@ public class ColAndRowProbeSpeedTest {
     // column probe line is high, the in pin is HIGH, else LOW
     private void runTest2() throws Exception {
         
-        log.debug( "Running test 2." );
+        log.debug( "\nRunning test 2." );
+        log.debug( "If a particular row probe is high, doesn't matter what the" ) ;
+        log.debug( "col probe value is, the in pin will be high if and only if" ) ;
+        log.debug( "the corresponding col probe wire is high." ) ;
+        log.debug( "\n" ) ;
+        
         spiBus.clear() ;
         
         BitVector bv = null ;
         int numTests = 0 ;
+        int maxColVal = (int)Math.pow( 2, colProbeBus.size() ) ;
         
         for( int r=0; r<rowProbeBus.size(); r++ ) {
             numTests++ ;
@@ -101,16 +108,16 @@ public class ColAndRowProbeSpeedTest {
             if( r > 0 )rowProbeBus.write( r-1, false ) ;
             rowProbeBus.write( r, true ) ;
             
-            for( int i=0; i<colProbeBus.size(); i++ ) {
-                bv = BitVector.fromBigInteger( BigInteger.valueOf( i ), 
+            for( int i=0; i<maxColVal; i++ ) {
+                bv = BitVector.fromBigInteger( BigInteger.valueOf( maxColVal ), 
                                                colProbeBus.size() ) ;
                 colProbeBus.write( bv ) ;
 
                 if( bv.getBit( r ) ) {
-                    checker.dialogInput( "LED high" ) ;
-//                    Assert.state( inPin.getState() == State.HIGH,
-//                                  "In pin should be HIGH if corresponding" + 
-//                                  " column and row probes are HIGH." ) ;
+//                    checker.dialogInput( "LED high" ) ;
+                    Assert.state( inPin.getState() == State.HIGH,
+                                  "In pin should be HIGH if corresponding" + 
+                                  " column and row probes are HIGH." ) ;
                 }
                 
                 if( numTests % 10 == 0 ) {
