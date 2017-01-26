@@ -1,4 +1,4 @@
-package com.deb.pi.boardgame.samples;
+package com.deb.pi.boardgame.samples.ipdriver;
 
 import org.apache.log4j.Logger ;
 
@@ -28,14 +28,27 @@ public class BoardReader {
     public BoardReader() throws Exception {
         spiBus = new SPIOutputBus( SpiChannel.CS1, SPI_BUS_SIZE ) ;
         colProbeBus = ( OutputBus )spiBus.getSubBus( 0, NUM_COLS_GAMEBOARD + 1 ) ;
-        rowProbeBus = ( OutputBus )spiBus.getSubBus( 9, NUM_ROWS_GAMEBOARD ) ;
+        rowProbeBus = ( OutputBus )spiBus.getSubBus( 4, NUM_ROWS_GAMEBOARD ) ;
         
         inPin = ObjectFactory.instance().getGPIOManager().getInputPin( 0 ) ;
     }
     
     public void readBoardState() throws Exception {
-        refreshBoardState( boardState ) ;
-        log.debug( "Board state = " + boardState ) ;
+        
+        BoardState tempState = ( BoardState )boardState.clone() ;
+        long startTime   = System.currentTimeMillis() ;
+        long duration    = 0 ;
+        int  numSecToRun = 60*5 ;
+        
+        while( duration < numSecToRun*1000 ) {
+            refreshBoardState( tempState ) ;
+            if( !boardState.equals( tempState ) ) {
+                boardState = ( BoardState )tempState.clone() ;
+                log.debug( boardState ) ;
+            }
+            Thread.sleep( 100 ) ;
+            duration = System.currentTimeMillis() - startTime ;
+        }
     }
     
     /**
@@ -111,6 +124,7 @@ public class BoardReader {
         log( "Reading board state..." ) ;
         
         spiBus.clear() ;
+        state.clear() ;
         log( "Cleared the SPI bus" ) ;
 
         // Read the grid states
@@ -158,7 +172,6 @@ public class BoardReader {
             }
             log( "\tSetting row probe to low" ) ;
             rowProbeBus.clear() ;
-            Thread.sleep( 5000 ) ;
         }
         
         log( "Reading switch states." ) ;
@@ -202,17 +215,11 @@ public class BoardReader {
     }
     
     private void log( String message ) {
-        log.debug( message ) ;
-        try {
-            Thread.sleep( 1000 ) ;
-        }
-        catch( Exception e ) {
-            // Gobble
-        }
+//        log.debug( message ) ;
+
     }
     
     private boolean inHigh() throws Exception {
-//        Thread.sleep( 5 ) ;
         return inPin.isHigh() ;
     }
 
@@ -220,6 +227,7 @@ public class BoardReader {
         
         log.debug( "Starting BoardReader sample program." ) ;
         
+//        new PiReadinessChecker().runPreFlightCheck() ;
         new BoardReader().readBoardState() ;
         ObjectFactory.instance().getGPIOManager().shutdown() ;
         
