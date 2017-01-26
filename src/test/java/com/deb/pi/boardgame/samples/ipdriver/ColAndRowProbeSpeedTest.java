@@ -40,7 +40,7 @@ public class ColAndRowProbeSpeedTest {
         spiBus.clear() ;
 
         try {
-//            runTest1() ;
+            runTest1() ;
             runTest2() ;
             log.debug( "Tests passed." );
         }
@@ -97,16 +97,13 @@ public class ColAndRowProbeSpeedTest {
         
         for( int r=0; r<rowProbeBus.size(); r++ ) {
             numTests++ ;
-            log.debug( "Running test " + numTests ) ;
             
-            log.debug( "  Writing to row probe bus" ) ;
             if( r > 0 )rowProbeBus.write( r-1, false ) ;
             rowProbeBus.write( r, true ) ;
             
             for( int i=0; i<colProbeBus.size(); i++ ) {
                 bv = BitVector.fromBigInteger( BigInteger.valueOf( i ), 
                                                colProbeBus.size() ) ;
-                log.debug( "  Writing to col probe bus" ) ;
                 colProbeBus.write( bv ) ;
 
                 if( bv.getBit( r ) ) {
@@ -119,7 +116,6 @@ public class ColAndRowProbeSpeedTest {
                 if( numTests % 10 == 0 ) {
                     System.out.println() ;
                 }
-                Thread.sleep( 1000 ) ;
             }
         }
         
