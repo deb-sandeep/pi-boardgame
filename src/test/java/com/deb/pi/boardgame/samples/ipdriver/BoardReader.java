@@ -22,11 +22,16 @@ public class BoardReader {
     private OutputBus colProbeBus = null ;
     private InPin     inPin       = null ;
     
+    private PiReadinessChecker checker = new PiReadinessChecker() ;
+    
     private BoardState boardState = new BoardState( NUM_ROWS_GAMEBOARD, 
                                                     NUM_COLS_GAMEBOARD,
                                                     NUM_ROWS_GAMEBOARD ) ;
     
     public BoardReader() throws Exception {
+        
+//        checker.runPreFlightCheck() ;
+        
         spiBus = new SPIOutputBus( SpiChannel.CS1, SPI_BUS_SIZE ) ;
         colProbeBus = ( OutputBus )spiBus.getSubBus( 0, NUM_COLS_GAMEBOARD + 1 ) ;
         rowProbeBus = ( OutputBus )spiBus.getSubBus( 9, NUM_ROWS_GAMEBOARD ) ;
@@ -38,10 +43,11 @@ public class BoardReader {
         
         System.out.println( "Starting the read cycles.." ) ;
         
-        BoardState tempState = ( BoardState )boardState.clone() ;
-        long startTime   = System.currentTimeMillis() ;
-        long duration    = 0 ;
-        int  numSecToRun = 60*1 ;
+        BoardState tempState  = ( BoardState )boardState.clone() ;
+        long startTime        = System.currentTimeMillis() ;
+        long duration         = 0 ;
+        int  numSecToRun      = 60*5 ;
+        long lastDurationMark = 0 ;
         
         while( duration < numSecToRun*1000 ) {
             refreshBoardState( tempState ) ;
@@ -51,7 +57,18 @@ public class BoardReader {
             }
             Thread.sleep( 100 ) ;
             duration = System.currentTimeMillis() - startTime ;
+            
+            if( duration - lastDurationMark > 30000 ) {
+                checker.dialogInput() ;
+                lastDurationMark = duration ;
+            }
         }
+    }
+    
+    public void singleRead() throws Exception {
+        
+        refreshBoardState( boardState ) ;
+        System.out.println( boardState ) ;
     }
     
     private void refreshBoardState( BoardState state ) throws Exception {
@@ -149,11 +166,12 @@ public class BoardReader {
         spiBus.clear() ;
     }
     
-    private void log( String message ) {
+    private void log( String message ) throws Exception {
 //        log.debug( message ) ;
     }
     
     private boolean inHigh() throws Exception {
+//        Thread.sleep( 5 ) ;
         return inPin.isHigh() ;
     }
 
@@ -161,8 +179,8 @@ public class BoardReader {
         
         log.debug( "Starting BoardReader sample program." ) ;
         
-//        new PiReadinessChecker().runPreFlightCheck() ;
         new BoardReader().readBoardState() ;
+//        new BoardReader().singleRead() ;
         ObjectFactory.instance().getGPIOManager().shutdown() ;
         
         log.debug( "Ending BoardReader sample program" ) ;

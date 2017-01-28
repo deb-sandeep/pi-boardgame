@@ -103,6 +103,7 @@ public abstract class BaseHardwareOutputBus extends OutputBusBase
                     bv.setBit( req.startWire+i, req.bv.getBit( i ) ) ;
                 }
             }
+            
             setHardwareBusState( bv ) ;
             BaseHardwareOutputBus.this.setNewBusState( bv ) ;
             

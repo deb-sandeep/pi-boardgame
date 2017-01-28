@@ -40,6 +40,10 @@ public class PiReadinessChecker {
         throw new IllegalStateException( question ) ;
     }
     
+    public boolean dialogInput() {
+        return dialogInput( "" ) ;
+    }
+    
     public boolean dialogInput( String message ) {
         
         System.out.print( message ) ;
@@ -52,6 +56,9 @@ public class PiReadinessChecker {
             if( input.equalsIgnoreCase( "Y" ) || 
                 input.equalsIgnoreCase( "YES" ) ) {
                 return true ;
+            }
+            else if( input.equalsIgnoreCase( "X" ) ) {
+                throw new IllegalStateException( "User abort" ) ;
             }
         }
         return false ;
