@@ -57,9 +57,6 @@ public class PiReadinessChecker {
                 input.equalsIgnoreCase( "YES" ) ) {
                 return true ;
             }
-            else if( input.equalsIgnoreCase( "X" ) ) {
-                throw new IllegalStateException( "User abort" ) ;
-            }
         }
         return false ;
     }
