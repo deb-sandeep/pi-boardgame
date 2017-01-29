@@ -1,9 +1,9 @@
-package com.deb.pi.boardgame.core.device.impl.mock;
+package com.deb.pi.boardgame.core.device.lcd.impl.mock;
 
 import org.apache.commons.lang.StringUtils ;
 import org.apache.log4j.Logger ;
 
-import com.deb.pi.boardgame.core.device.impl.AbstractLCDBaseImpl ;
+import com.deb.pi.boardgame.core.device.lcd.impl.AbstractLCDBaseImpl ;
 import com.pi4j.util.StringUtil ;
 
 public class MockLCDImpl extends AbstractLCDBaseImpl {

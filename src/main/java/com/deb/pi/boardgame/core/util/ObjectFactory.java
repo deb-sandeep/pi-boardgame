@@ -2,7 +2,7 @@ package com.deb.pi.boardgame.core.util ;
 
 import org.springframework.context.support.GenericXmlApplicationContext ;
 
-import com.deb.pi.boardgame.core.device.LCD ;
+import com.deb.pi.boardgame.core.device.lcd.LCD ;
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 
 /**

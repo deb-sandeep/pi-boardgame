@@ -4,7 +4,6 @@ import org.apache.log4j.Logger ;
 
 import com.deb.pi.boardgame.core.bus.OutputBus ;
 import com.deb.pi.boardgame.core.bus.impl.output.SPIOutputBus ;
-import com.deb.pi.boardgame.core.gpio.InPin ;
 import com.deb.pi.boardgame.samples.PiReadinessChecker ;
 import com.pi4j.io.spi.SpiChannel ;
 

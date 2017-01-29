@@ -1,6 +1,6 @@
-package com.deb.pi.boardgame.core.device.impl ;
+package com.deb.pi.boardgame.core.device.lcd.impl ;
 
-import com.deb.pi.boardgame.core.device.LCD ;
+import com.deb.pi.boardgame.core.device.lcd.LCD ;
 
 public abstract class AbstractLCDBaseImpl implements LCD {
 

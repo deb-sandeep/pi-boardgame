@@ -1,4 +1,4 @@
-package com.deb.pi.boardgame.core.device;
+package com.deb.pi.boardgame.core.device.lcd;
 
 public interface LCD {
 

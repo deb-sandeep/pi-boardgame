@@ -10,6 +10,6 @@
    </bean>
    
    <bean id="LCD"
-         class="com.deb.pi.boardgame.core.device.impl.pi.LCDImpl">
+         class="com.deb.pi.boardgame.core.device.lcd.impl.pi.LCDImpl">
    </bean>
 </beans>

@@ -5,7 +5,7 @@ import java.util.Stack ;
 import org.apache.commons.lang.StringUtils ;
 import org.apache.commons.lang.WordUtils ;
 
-import com.deb.pi.boardgame.core.device.LCD ;
+import com.deb.pi.boardgame.core.device.lcd.LCD ;
 import com.deb.pi.boardgame.core.ui.Dialog.Option ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
