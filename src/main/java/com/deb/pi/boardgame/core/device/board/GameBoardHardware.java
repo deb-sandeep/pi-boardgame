@@ -202,7 +202,7 @@ public class GameBoardHardware {
         
         Cell cell = getCell( row, col ) ;
         cell.setOccupied( state ) ;
-//        vibratorPin.pulse( 100 ) ;
+        vibratorPin.pulse( 75 ) ;
     }
 
     boolean getCellState( int row, int col ) {
@@ -215,7 +215,7 @@ public class GameBoardHardware {
     
     void setSwitchState( int switchNum, boolean state ) {
         switches[switchNum].setState( state ) ;
-//        vibratorPin.pulse( 100 ) ;
+        vibratorPin.pulse( 75 ) ;
     }
     
     boolean getSwitchState( int switchNum ) {

@@ -34,7 +34,7 @@ public class GameBoardHardwareExample extends Thread {
             catch( Exception e ){}
             
             duration = System.currentTimeMillis() - startTime ;
-            if( duration > 60*1000 ) {
+            if( duration > 30*1000 ) {
                 if( !CHECKER.dialogInput() ) {
                     log.debug( "Shutting down hardware." ) ;
                     try {
