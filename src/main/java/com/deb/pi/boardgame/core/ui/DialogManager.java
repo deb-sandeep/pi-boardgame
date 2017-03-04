@@ -7,6 +7,7 @@ import org.apache.commons.lang.WordUtils ;
 
 import com.deb.pi.boardgame.core.device.lcd.LCD ;
 import com.deb.pi.boardgame.core.ui.Dialog.Option ;
+import com.deb.pi.boardgame.core.util.MediaFile ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 
 public class DialogManager {
@@ -16,7 +17,7 @@ public class DialogManager {
     private LCD lcd = null ;
     private Stack<Dialog> dialogStack = new Stack<>() ;
     
-    private DialogManager(){
+    private DialogManager() {
         lcd = ObjectFactory.instance().getLCD() ;
     }
     
@@ -49,6 +50,7 @@ public class DialogManager {
         if( d != null ) {
             String[] lines = convertDialogToStringArray( d ) ;
             lcd.showScreen( lines ) ;
+            MediaFile.BELL.play() ;
         }
     }
     

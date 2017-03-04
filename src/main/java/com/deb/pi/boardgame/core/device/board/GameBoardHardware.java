@@ -8,6 +8,7 @@ import org.springframework.util.Assert ;
 
 import com.deb.pi.boardgame.core.gpio.GPIOManager ;
 import com.deb.pi.boardgame.core.gpio.OutPin ;
+import com.deb.pi.boardgame.core.gpio.AbstractPin.State ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 import com.pi4j.io.spi.SpiChannel ;
 
@@ -69,6 +70,7 @@ public class GameBoardHardware {
     
     private static final int READER_IN_PIN = 0 ;
     private static final int VIBRATOR_OUT_PIN = 1 ;
+    private static final int EXT_CIRCUIT_POWER_PIN = 7 ;
     
     private int numRows     = 0 ;
     private int numCols     = 0 ;
@@ -85,6 +87,7 @@ public class GameBoardHardware {
     private RendererDaemon    rendererDaemon    = null ;
     
     private OutPin vibratorPin = null ;
+    private OutPin extCktPowerPin = null ;
     
     public GameBoardHardware( int numRows, int numCols, int numSwitches ) 
         throws Exception {
@@ -110,7 +113,7 @@ public class GameBoardHardware {
             this.switches[sw] = new Switch() ;
         }
         
-        setAutoGlowCellStates( GlowState.GREEN, GlowState.OFF ) ;
+        disableCellTenantHighlight() ;
         
         rendererDaemon = new RendererDaemon( this, SpiChannel.CS0 ) ;
         stateReaderDaemon = new StateReaderDaemon( this, SpiChannel.CS1, 
@@ -118,9 +121,14 @@ public class GameBoardHardware {
         
         GPIOManager gpioMgr = ObjectFactory.instance().getGPIOManager() ;
         vibratorPin = gpioMgr.getOutputPin( VIBRATOR_OUT_PIN ) ;
+        extCktPowerPin = gpioMgr.getOutputPin( EXT_CIRCUIT_POWER_PIN ) ;
     }
     
     public void initialize() {
+        
+        log.debug( "Powering on extended circuitry" ) ;
+        extCktPowerPin.setState( State.HIGH ) ;
+        
         if( stateReaderDaemon != null ) {
             stateReaderDaemon.start() ;
         }
@@ -144,20 +152,30 @@ public class GameBoardHardware {
         
         rendererDaemon.die() ;
         rendererDaemon = null ;
+        
+        extCktPowerPin.setState( State.LOW ) ;
     }
     
-    private void setAutoGlowCellStates( GlowState glowStateIfPiecePresent,
-                                       GlowState glowStateIfPieceAbsent ) {
-
+    public void disableCellTenantHighlight() {
+        setTenantGlowStates( GlowState.OFF, GlowState.OFF ) ;
+    }
+    
+    public void enableCellTenantHighlight() {
+        setTenantGlowStates( GlowState.GREEN, GlowState.OFF ) ;
+    }
+    
+    private void setTenantGlowStates( GlowState glowStateIfPiecePresent,
+                                      GlowState glowStateIfPieceAbsent ) {
+        
         this.glowStateIfCellOccupied = glowStateIfPiecePresent ;
         this.glowStateIfCellEmpty    = glowStateIfPieceAbsent ;
-
+        
         for( Cell c : cellArray ) {
             if( c.isOccupied() ) {
-                c.setGlowState( glowStateIfPiecePresent ) ;
+                c.setGlowState( this.glowStateIfCellOccupied ) ;
             }
             else {
-                c.setGlowState( glowStateIfPieceAbsent ) ;
+                c.setGlowState( this.glowStateIfCellEmpty ) ;
             }
         }
     }
@@ -170,12 +188,6 @@ public class GameBoardHardware {
         Assert.isTrue( pattern[0].length == numCols, 
                        "Pattern cols should equal board col size" ) ;
         
-        // Suppress the auto glow thingi
-        GlowState oldGlowStateIfPiecePresent = glowStateIfCellOccupied ;
-        GlowState oldGlowStateIfPieceAbsent  = glowStateIfCellEmpty ;
-        
-        setAutoGlowCellStates( GlowState.OFF, GlowState.OFF ) ;
-        
         for( int row=0; row<numRows; row++ ) {
             for( int col=0; col<numCols; col++ ) {
                 getCell( row, col ).setGlowState( pattern[row][col] );
@@ -186,9 +198,6 @@ public class GameBoardHardware {
             Thread.sleep( millis ) ;
         }
         catch( Exception e ) { /* Gobble */ }
-        
-        setAutoGlowCellStates( oldGlowStateIfPiecePresent, 
-                               oldGlowStateIfPieceAbsent ) ;
     }
     
     private Cell getCell( int row, int col ) {

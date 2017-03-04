@@ -5,29 +5,31 @@ import org.apache.log4j.Logger ;
 import com.deb.pi.boardgame.core.device.board.GameBoardHardware ;
 import com.deb.pi.boardgame.core.ui.Dialog ;
 import com.deb.pi.boardgame.core.ui.DialogManager ;
+import com.deb.pi.boardgame.core.util.MediaFile ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
 import com.deb.pi.boardgame.samples.PiReadinessChecker ;
 
 /**
  * This is an executable class which does a broad spectrum sanity test of all
- * the gameboard components in sequence. 
+ * the two player hardware components in sequence. 
  * 
  * 1. LCD Panel
  * 2. Audio amplifier
  * 3. Board interaction
  */
-public class GameBoardDeviceTester extends Thread {
+public class TwoPlayerDeviceTester extends Thread {
     
-    static Logger log = Logger.getLogger( GameBoardDeviceTester.class ) ;
+    static Logger log = Logger.getLogger( TwoPlayerDeviceTester.class ) ;
     
     static enum BoardType{ CHESS, TICTACTOE } ;
     static PiReadinessChecker CHECKER = new PiReadinessChecker() ;
 
     private GameBoardHardware hardware = null ;
-    private boolean keepRunning = true ;
     private DialogManager dMgr = null ;
     
-    public GameBoardDeviceTester( BoardType boardType ) throws Exception {
+    private boolean keepRunning = true ;
+    
+    public TwoPlayerDeviceTester( BoardType boardType ) throws Exception {
         if( boardType == BoardType.TICTACTOE ) {
             hardware = new GameBoardHardware( 3, 3, 3 ) ;
         }
@@ -39,17 +41,26 @@ public class GameBoardDeviceTester extends Thread {
     
     public void runSimulation() throws Exception {
         
-        showDialog( Dialog.createNoInputDialog( "Game Board\nDevice Diagnostic" ) ) ;
-        
         // Hardware initialization starts the state reader and renderer daemons
         hardware.initialize() ;
+
+        // Note that till the time the gameboard is initialized, the extended
+        // circuitry does not receive power. Hence the startup screen can only 
+        // be shown after we have initialized the hardware.
+        showStartupScreen() ;
         
         // Starts the killer watchdog which enables the program to be shut down
         start() ;
     }
     
-    private void showDialog( Dialog dialog ) {
-        dMgr.showDialog( dialog ) ;
+    private void showStartupScreen() throws Exception {
+        
+        dMgr.showDialog( Dialog.createNoInputDialog( "Game Board\n" + 
+                                                     "Device Diagnostic" ) ) ;
+        MediaFile.INTRO.play() ;
+        
+        Thread.sleep( 5000 ) ;
+        dMgr.popDialog() ;
     }
     
     public void run() {
@@ -77,14 +88,13 @@ public class GameBoardDeviceTester extends Thread {
                 }
             }
         }
-        
         ObjectFactory.instance().getGPIOManager().shutdown() ;
     }
     
     public static void main( String[] args ) throws Exception {
         
         log.debug( "Starting game board hardware testing.." ) ;
-        GameBoardDeviceTester example = new GameBoardDeviceTester( BoardType.TICTACTOE ) ;
+        TwoPlayerDeviceTester example = new TwoPlayerDeviceTester( BoardType.TICTACTOE ) ;
         example.runSimulation() ;
     }
 }
