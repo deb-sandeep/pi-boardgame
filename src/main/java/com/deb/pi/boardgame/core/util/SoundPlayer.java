@@ -1,8 +1,6 @@
 package com.deb.pi.boardgame.core.util;
 
 import java.io.File ;
-import java.io.FileInputStream ;
-import java.io.InputStream ;
 import java.util.List ;
 
 import javax.sound.sampled.AudioFormat ;
@@ -15,14 +13,6 @@ import org.apache.commons.io.IOUtils ;
 
 public class SoundPlayer {
 
-    public static void playFile( File file ) 
-        throws Exception {
-        
-        InputStream is = new FileInputStream( file ) ;
-        playStream( is ) ;
-        is.close() ;
-    }
-    
     public static void playFileSequence( List<File> files, int gapInMillis ) 
         throws Exception {
         
@@ -37,17 +27,14 @@ public class SoundPlayer {
         }
     }
 
-    public static void playStream( InputStream is ) 
+    public static void playFile( File file ) 
             throws Exception {
             
-        AudioInputStream  audioStream = null ;
-        AudioFormat       audioFormat = null ;
+        AudioInputStream  audioStream = AudioSystem.getAudioInputStream( file ) ;
+        AudioFormat       audioFormat = audioStream.getFormat() ; ;
         SourceDataLine    sourceLine  = null ;
         byte[]            abData      = IOUtils.toByteArray( audioStream ) ;
         
-        audioStream = AudioSystem.getAudioInputStream( is ) ;
-        audioFormat = audioStream.getFormat() ;
-    
         DataLine.Info info = new DataLine.Info( SourceDataLine.class, audioFormat ) ;
         sourceLine = ( SourceDataLine )AudioSystem.getLine( info ) ;
         sourceLine.open( audioFormat ) ;
@@ -56,5 +43,7 @@ public class SoundPlayer {
         sourceLine.write( abData, 0, abData.length ) ;
         sourceLine.drain() ;
         sourceLine.close() ;
+        
+        audioStream.close() ;
     }
 }

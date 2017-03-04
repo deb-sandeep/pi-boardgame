@@ -68,7 +68,12 @@ public class DialogManager {
         
         String lcdLines[] = new String[4] ;
         for( int i=0; i<msgLines.length; i++ ) {
-            lcdLines[i] = msgLines[i] ;
+            if( d.isCentered() ) {
+                lcdLines[i] = StringUtils.center( msgLines[i], 20 ) ;
+            }
+            else {
+                lcdLines[i] = msgLines[i] ;
+            }
         }
         
         if( d.getInputOptions() != Option.NO_INPUT ) {

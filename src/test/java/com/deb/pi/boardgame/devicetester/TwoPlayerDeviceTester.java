@@ -50,13 +50,15 @@ public class TwoPlayerDeviceTester extends Thread {
         showStartupScreen() ;
         
         // Starts the killer watchdog which enables the program to be shut down
-        start() ;
+        //start() ;
+        hardware.shutdown() ;
     }
     
     private void showStartupScreen() throws Exception {
         
         dMgr.showDialog( Dialog.createNoInputDialog( "Game Board\n" + 
-                                                     "Device Diagnostic" ) ) ;
+                                                     "Device Diagnostic" )
+                               .setCentered() ) ;
         MediaFile.INTRO.play() ;
         
         Thread.sleep( 5000 ) ;

@@ -12,6 +12,7 @@ public class Dialog {
     
     private String message = null ;
     private Option inputOptions = null ;
+    private boolean centered = false ;
     
     private Dialog( String message, Option inputOptions ) {
         this.message = message ;
@@ -24,6 +25,15 @@ public class Dialog {
     
     public Option getInputOptions() {
         return this.inputOptions ;
+    }
+    
+    public Dialog setCentered() {
+        this.centered = true ;
+        return this ;
+    }
+    
+    public boolean isCentered() {
+        return this.centered ;
     }
     
     public static Dialog createOkDialog( String message ) {
