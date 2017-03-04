@@ -26,6 +26,7 @@ public class TwoPlayerDeviceTester extends Thread {
 
     private GameBoardHardware hardware = null ;
     private DialogManager dMgr = null ;
+    private BootBanner banner = null ;
     
     private boolean keepRunning = true ;
     
@@ -37,6 +38,7 @@ public class TwoPlayerDeviceTester extends Thread {
             hardware = new GameBoardHardware( 8, 8, 3 ) ;
         }
         dMgr = DialogManager.instance() ;
+        banner = new BootBanner( hardware ) ;
     }
     
     public void runSimulation() throws Exception {
@@ -59,9 +61,12 @@ public class TwoPlayerDeviceTester extends Thread {
         dMgr.showDialog( Dialog.createNoInputDialog( "Game Board\n" + 
                                                      "Device Diagnostic" )
                                .setCentered() ) ;
+        
         MediaFile.INTRO.play() ;
         
-        Thread.sleep( 5000 ) ;
+        banner.start() ;
+        banner.join() ;
+        
         dMgr.popDialog() ;
     }
     
