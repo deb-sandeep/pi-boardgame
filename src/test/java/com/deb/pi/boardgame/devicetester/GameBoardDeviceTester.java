@@ -1,25 +1,55 @@
-package com.deb.pi.boardgame.samples;
+package com.deb.pi.boardgame.devicetester;
 
 import org.apache.log4j.Logger ;
 
 import com.deb.pi.boardgame.core.device.board.GameBoardHardware ;
+import com.deb.pi.boardgame.core.ui.Dialog ;
+import com.deb.pi.boardgame.core.ui.DialogManager ;
 import com.deb.pi.boardgame.core.util.ObjectFactory ;
+import com.deb.pi.boardgame.samples.PiReadinessChecker ;
 
-public class GameBoardHardwareExample extends Thread {
+/**
+ * This is an executable class which does a broad spectrum sanity test of all
+ * the gameboard components in sequence. 
+ * 
+ * 1. LCD Panel
+ * 2. Audio amplifier
+ * 3. Board interaction
+ */
+public class GameBoardDeviceTester extends Thread {
     
-    static Logger log = Logger.getLogger( GameBoardHardwareExample.class ) ;
+    static Logger log = Logger.getLogger( GameBoardDeviceTester.class ) ;
+    
+    static enum BoardType{ CHESS, TICTACTOE } ;
     static PiReadinessChecker CHECKER = new PiReadinessChecker() ;
 
     private GameBoardHardware hardware = null ;
     private boolean keepRunning = true ;
+    private DialogManager dMgr = null ;
     
-    public GameBoardHardwareExample() throws Exception {
-        hardware = new GameBoardHardware( 3, 3, 3 ) ;
+    public GameBoardDeviceTester( BoardType boardType ) throws Exception {
+        if( boardType == BoardType.TICTACTOE ) {
+            hardware = new GameBoardHardware( 3, 3, 3 ) ;
+        }
+        else {
+            hardware = new GameBoardHardware( 8, 8, 3 ) ;
+        }
+        dMgr = DialogManager.instance() ;
     }
     
     public void runSimulation() throws Exception {
-        start() ;
+        
+        showDialog( Dialog.createNoInputDialog( "Game Board\nDevice Diagnostic" ) ) ;
+        
+        // Hardware initialization starts the state reader and renderer daemons
         hardware.initialize() ;
+        
+        // Starts the killer watchdog which enables the program to be shut down
+        start() ;
+    }
+    
+    private void showDialog( Dialog dialog ) {
+        dMgr.showDialog( dialog ) ;
     }
     
     public void run() {
@@ -53,10 +83,8 @@ public class GameBoardHardwareExample extends Thread {
     
     public static void main( String[] args ) throws Exception {
         
-//        CHECKER.runPreFlightCheck() ;
-        
         log.debug( "Starting game board hardware testing.." ) ;
-        GameBoardHardwareExample example = new GameBoardHardwareExample() ;
+        GameBoardDeviceTester example = new GameBoardDeviceTester( BoardType.TICTACTOE ) ;
         example.runSimulation() ;
     }
 }

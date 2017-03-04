@@ -1,11 +1,11 @@
 package com.deb.pi.boardgame.samples;
 
-import com.deb.pi.boardgame.core.util.AudioPlayer ;
+import com.deb.pi.boardgame.game.chess.MoveAudioPlayer ;
 
 public class AudioPlayerExample {
 
 	public static void main(String[] args) throws Exception{
-		AudioPlayer player = new AudioPlayer();
+		MoveAudioPlayer player = new MoveAudioPlayer();
 		player.playSound( "pawn c4 Takes knight E5" );
 	}
 
